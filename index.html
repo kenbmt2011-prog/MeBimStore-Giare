@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Góc Mẹ Bỉm - Review Realtime & Tích Điểm Đổi Tiền ATM</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons (Monochrome Neutral Icon System) -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts: Inter & Nunito -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -130,9 +130,9 @@
                     </button>
 
                     <!-- Admin Panel Access Button -->
-                    <button id="adminBtn" onclick="openAdminModal()" class="hidden bg-slate-900 dark:bg-purple-600 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-md transition-all flex items-center gap-1.5" title="Quản Trị Admin">
-                        <i class="fa-solid fa-user-shield text-xs"></i>
-                        <span class="hidden sm:inline">ADMIN</span>
+                    <button id="adminBtn" onclick="openAdminModal()" class="hidden bg-purple-700 hover:bg-purple-800 text-white text-xs font-black px-3 py-2 rounded-xl shadow-md transition-all flex items-center gap-1.5" title="Bảng Quản Trị Độc Quyền">
+                        <i class="fa-solid fa-shield-halved text-xs text-amber-300"></i>
+                        <span class="hidden sm:inline">ADMIN CỐ ĐỊNH</span>
                     </button>
 
                     <!-- User Avatar & Profile Button -->
@@ -158,6 +158,7 @@
         </div>
     </header>
 
+    <!-- Notification Panel -->
     <div id="notifPanel" class="hidden fixed top-16 right-4 z-40 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-4 text-xs space-y-3">
         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
             <h4 class="font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
@@ -206,6 +207,7 @@
         </div>
     </section>
 
+    <!-- Action Toolbar Grid -->
     <section class="max-w-7xl mx-auto px-4 mt-5">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-sm grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-center text-xs">
             <button onclick="openLeaderboardModal()" class="p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex flex-col items-center gap-1.5">
@@ -243,7 +245,9 @@
         </div>
     </section>
 
+    <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 mt-6">
+        <!-- Filters Bar -->
         <div class="space-y-2 mb-4">
             <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar" id="categoryContainer"></div>
             <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar" id="ageStageContainer"></div>
@@ -263,6 +267,7 @@
             </div>
         </div>
 
+        <!-- Product Grid -->
         <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5"></div>
 
         <div id="emptyState" class="hidden text-center py-16 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm mt-4">
@@ -273,6 +278,7 @@
         </div>
     </main>
 
+    <!-- AUTH MODAL -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
         <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800">
             <button onclick="closeAuthModal()" class="absolute top-4 right-4 bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
@@ -311,6 +317,7 @@
         </div>
     </div>
 
+    <!-- WALLET MODAL -->
     <div id="walletModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
         <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-xl w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto custom-scrollbar">
             
@@ -419,6 +426,7 @@
         </div>
     </div>
 
+    <!-- PROOF MODAL -->
     <div id="proofModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
         <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto custom-scrollbar">
             
@@ -430,7 +438,6 @@
             </div>
 
             <form id="proofForm" onsubmit="submitOrderProof(event)" class="space-y-3 text-xs">
-                
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-slate-200 mb-1">Món Đồ Đã Mua Cần Tích Điểm (Bắt Buộc) *</label>
                     <div class="flex gap-2">
@@ -476,6 +483,7 @@
         </div>
     </div>
 
+    <!-- PRODUCT PICKER MODAL -->
     <div id="productPickerModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
         <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-5 shadow-2xl relative border border-slate-200 dark:border-slate-800 max-h-[85vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">
@@ -486,6 +494,7 @@
         </div>
     </div>
 
+    <!-- DETAIL MODAL & REVIEWS -->
     <div id="detailModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
         <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl relative border border-slate-200 dark:border-slate-800" id="modalCard">
             <button onclick="closeDetailModal()" class="absolute top-3 right-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full flex items-center justify-center z-10 hover:bg-rose-50 transition-colors">
@@ -496,76 +505,253 @@
 
             <div class="p-6 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
                 <h4 class="font-bold text-xs text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-comments text-rose-500"></i> Bình Luận Từ Mẹ Bỉm
+                    <i class="fa-solid fa-comments text-rose-500"></i> Bình Luận & Đánh Giá Thực Tế Từ Mẹ Bỉm
                 </h4>
                 <div id="commentList" class="space-y-3 max-h-48 overflow-y-auto custom-scrollbar mb-4 pr-1">
                     <p class="text-xs text-slate-400 italic text-center py-2">Đang tải bình luận...</p>
                 </div>
                 <form id="commentForm" onsubmit="submitComment(event)" class="flex gap-2">
                     <input type="text" id="commentInput" placeholder="Nhập bình luận hoặc hỏi kinh nghiệm dùng món này..." class="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs rounded-xl px-3 py-2.5 outline-none focus:border-rose-500 dark:text-white">
-                    <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition-all">
-                        Gửi
+                    <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-paper-plane text-xs"></i> Gửi
                     </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <div id="adminModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 hidden">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-5xl w-full max-h-[94vh] overflow-y-auto custom-scrollbar p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800">
+    <!-- SECURE HARDCODED ADMIN MODAL -->
+    <div id="adminModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 max-h-[92vh] overflow-y-auto custom-scrollbar">
             
             <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
-                <h3 class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                    <i class="fa-solid fa-user-shield text-slate-500"></i> Bảng Quản Trị ADMIN Hệ Thống
-                </h3>
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-2xl bg-purple-700 text-white flex items-center justify-center font-bold shadow-md">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                            BẢNG QUẢN TRỊ ADMIN ĐỘC QUYỀN
+                            <span class="bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-[10px] px-2 py-0.5 rounded-md border border-purple-300">Siêu Bảo Mật</span>
+                        </h3>
+                        <p class="text-[10px] text-slate-400">Tài khoản quản trị cố định: <span class="font-bold text-purple-600 font-mono">trongsangheheboy@gmail.com</span></p>
+                    </div>
+                </div>
                 <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <div id="adminPinSection" class="text-center py-10">
-                <i class="fa-solid fa-lock text-4xl text-slate-400 mb-3"></i>
-                <h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm mb-1">Xác Nhận Mã PIN Admin Bảo Mật</h4>
-                <p class="text-xs text-slate-400 mb-4">Vui lòng nhập mã PIN để truy cập quản trị toàn bộ hệ thống (Mặc định: 123456)</p>
-                <div class="max-w-xs mx-auto flex gap-2 justify-center mb-4">
-                    <input type="password" id="adminPinInput" maxlength="6" placeholder="Mã PIN" class="w-36 text-center text-lg font-mono font-bold bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 dark:text-white rounded-xl py-2 outline-none focus:border-slate-900">
+            <!-- PIN Unlock Prompt Panel -->
+            <div id="adminPinSection" class="space-y-4 py-6 text-center max-w-md mx-auto">
+                <div class="w-16 h-16 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-300 flex items-center justify-center text-2xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-key"></i>
                 </div>
-                <button onclick="verifyAdminPin()" class="bg-slate-900 dark:bg-rose-600 hover:bg-slate-800 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-md transition-all">
-                    Xác Nhận Mã PIN
-                </button>
+                <div>
+                    <h4 class="font-black text-base text-slate-800 dark:text-white">Xác Thực Mã PIN Quản Trị Hệ Thống</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Chỉ tài khoản admin cố định mới có thể mở khóa bảng điều khiển (Mặc định: <code class="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded font-bold text-rose-500">123456</code>)</p>
+                </div>
+
+                <form onsubmit="handleAdminPinSubmit(event)" class="space-y-3">
+                    <input type="password" id="adminPinInput" maxlength="6" placeholder="Nhập PIN 6 số..." class="w-48 text-center bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 dark:text-white rounded-2xl py-3 px-4 font-mono text-xl font-black tracking-widest outline-none focus:border-purple-600">
+                    <div>
+                        <button type="submit" class="bg-purple-700 hover:bg-purple-800 text-white font-extrabold text-xs px-6 py-3 rounded-xl shadow-md transition-all">
+                            Xác Nhận Mở Khóa Admin
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            <div id="adminDashboard" class="hidden">
-                <div class="flex gap-1 border-b border-slate-200 dark:border-slate-800 mb-5 overflow-x-auto custom-scrollbar">
-                    <button id="admTabUsers" onclick="switchAdminTab('users')" class="py-2.5 px-4 text-xs font-black border-b-2 border-slate-900 dark:border-rose-500 text-slate-900 dark:text-rose-400 whitespace-nowrap">
-                        <i class="fa-solid fa-users-gear mr-1"></i> Quản Lý Thành Viên
+            <!-- Unlocked Admin Content Dashboard -->
+            <div id="adminContentSection" class="hidden space-y-5">
+                
+                <!-- Admin Navigation Tabs -->
+                <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 overflow-x-auto custom-scrollbar text-xs font-bold">
+                    <button id="adminTabProofs" onclick="switchAdminTab('proofs')" class="px-4 py-2 rounded-xl bg-purple-700 text-white shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-clipboard-check"></i> Duyệt Đơn Tích Điểm
                     </button>
-                    <button id="admTabProduct" onclick="switchAdminTab('product')" class="py-2.5 px-4 text-xs font-bold border-b-2 border-transparent text-slate-500 whitespace-nowrap">
-                        <i class="fa-solid fa-box-open mr-1"></i> Quản Lý & Đăng Đồ Mới
+                    <button id="adminTabWithdrawals" onclick="switchAdminTab('withdrawals')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-hand-holding-dollar"></i> Duyệt Rút Tiền ATM
                     </button>
-                    <button id="admTabOrder" onclick="switchAdminTab('order')" class="py-2.5 px-4 text-xs font-bold border-b-2 border-transparent text-slate-500 whitespace-nowrap">
-                        <i class="fa-solid fa-receipt mr-1"></i> Duyệt Đơn Tích Điểm
+                    <button id="adminTabProducts" onclick="switchAdminTab('products')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-boxes-packing"></i> Quản Lý Sản Phẩm
                     </button>
-                    <button id="admTabWithdraw" onclick="switchAdminTab('withdraw')" class="py-2.5 px-4 text-xs font-bold border-b-2 border-transparent text-slate-500 whitespace-nowrap">
-                        <i class="fa-solid fa-money-bill-transfer mr-1"></i> Duyệt Rút Tiền ATM
-                    </button>
-                    <button id="admTabAi" onclick="switchAdminTab('ai')" class="py-2.5 px-4 text-xs font-bold border-b-2 border-transparent text-purple-600 dark:text-purple-400 whitespace-nowrap">
-                        <i class="fa-solid fa-robot mr-1"></i> Trợ Lý AI Gemini Admin
+                    <button id="adminTabUsers" onclick="switchAdminTab('users')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-users-gear"></i> Danh Sách Mẹ Bỉm
                     </button>
                 </div>
 
-                <!-- Admin Tab 1: Users -->
-                <div id="admSecUsers" class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h4 class="font-extrabold text-xs text-slate-800 dark:text-white">Danh Sách Thành Viên & Quản Lý Spam</h4>
-                        <button onclick="loadAdminUsers()" class="text-xs bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-bold">Làm Mới</button>
+                <!-- ADMIN SECTION: PROOFS REVIEW -->
+                <div id="adminSectionProofs" class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-extrabold text-xs text-slate-800 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list text-purple-600"></i> Danh Sách Đơn Hàng Chờ Duyệt Tích Điểm
+                        </h4>
+                        <span id="adminProofCountBadge" class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full">0 đơn chờ</span>
                     </div>
-                    <div class="overflow-x-auto custom-scrollbar">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+
+                    <div class="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-2xl">
+                        <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                            <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] uppercase font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
                                 <tr>
-                                    <th class="p-3 rounded-l-xl">Thành Viên (ID & Mã)</th>
+                                    <th class="p-3">Thời gian</th>
+                                    <th class="p-3">Mẹ Bỉm</th>
+                                    <th class="p-3">Sản Phẩm</th>
+                                    <th class="p-3">Mã Đơn Hàng</th>
+                                    <th class="p-3">Thưởng</th>
+                                    <th class="p-3">Ảnh Hóa Đơn</th>
+                                    <th class="p-3">Trạng Thái</th>
+                                    <th class="p-3 text-right">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminProofTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                <tr>
+                                    <td colspan="8" class="text-center py-6 text-slate-400 italic">Chưa có đơn hàng nào cần duyệt.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ADMIN SECTION: WITHDRAWALS REVIEW -->
+                <div id="adminSectionWithdrawals" class="hidden space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-extrabold text-xs text-slate-800 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-money-bill-transfer text-emerald-600"></i> Danh Sách Yêu Cầu Rút Tiền ATM
+                        </h4>
+                        <span id="adminWithdrawCountBadge" class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">0 yêu cầu</span>
+                    </div>
+
+                    <div class="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-2xl">
+                        <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                            <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] uppercase font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="p-3">Thời gian</th>
+                                    <th class="p-3">Mẹ Bỉm</th>
+                                    <th class="p-3">Số Tiền Rút</th>
+                                    <th class="p-3">Thông Tin Ngân Hàng</th>
+                                    <th class="p-3">Mã QR ATM</th>
+                                    <th class="p-3">Trạng Thái</th>
+                                    <th class="p-3 text-right">Thao Tác Duyệt</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminWithdrawTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                <tr>
+                                    <td colspan="7" class="text-center py-6 text-slate-400 italic">Chưa có yêu cầu rút tiền nào.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ADMIN SECTION: PRODUCTS MANAGEMENT -->
+                <div id="adminSectionProducts" class="hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-extrabold text-xs text-slate-800 dark:text-white">Thêm / Chỉnh Sửa Danh Sách Sản Phẩm Tích Điểm</h4>
+                        <button onclick="resetProductAdminForm()" class="bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-xs"></i> Thêm Sản Phẩm Mới
+                        </button>
+                    </div>
+
+                    <!-- Product Form -->
+                    <form id="adminProductForm" onsubmit="saveAdminProduct(event)" class="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs space-y-3">
+                        <input type="hidden" id="adminProdId">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold mb-1">Tên Sản Phẩm *</label>
+                                <input type="text" id="adminProdTitle" required placeholder="Bỉm quần Moony Natural size L..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none focus:border-purple-600">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Danh Mục *</label>
+                                <select id="adminProdCategory" required class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none focus:border-purple-600">
+                                    <option value="bim">Bỉm Tã</option>
+                                    <option value="binh-sua">Bình Sữa</option>
+                                    <option value="sua-bot">Sữa Bột</option>
+                                    <option value="an-dam">Đồ Ăn Dặm</option>
+                                    <option value="may-hut-sua">Máy Hút Sữa</option>
+                                    <option value="cham-soc">Chăm Sóc Bé</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div>
+                                <label class="block font-bold mb-1">Giá Gốc (VNĐ)</label>
+                                <input type="number" id="adminProdOriginalPrice" required placeholder="450000" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none focus:border-purple-600">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Giá Khuyến Mãi (VNĐ)</label>
+                                <input type="number" id="adminProdPrice" required placeholder="389000" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none focus:border-purple-600">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">% Hoàn Điểm Thưởng</label>
+                                <input type="number" id="adminProdRewardPercent" required min="1" max="50" placeholder="5" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none focus:border-purple-600">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Lứa Tuổi Phù Hợp</label>
+                                <select id="adminProdAgeStage" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none focus:border-purple-600">
+                                    <option value="0-3m">Sơ sinh (0-3 tháng)</option>
+                                    <option value="3-6m">3 - 6 tháng</option>
+                                    <option value="6-12m">6 - 12 tháng</option>
+                                    <option value="1-3y">1 - 3 tuổi</option>
+                                    <option value="me-bim">Mẹ Bỉm</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold mb-1">Link Ảnh Sản Phẩm *</label>
+                                <input type="url" id="adminProdImg" required placeholder="https://..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none focus:border-purple-600">
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-1">Link Affiliate Mua Sắm (Shopee/Lazada) *</label>
+                                <input type="url" id="adminProdAffLink" required placeholder="https://shope.ee/..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none focus:border-purple-600">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold mb-1">Mô Tả & Đánh Giá Nhanh</label>
+                            <textarea id="adminProdDesc" rows="2" placeholder="Sản phẩm mềm mại, thấm hút vượt trội 12 tiếng..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 outline-none focus:border-purple-600"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-extrabold py-3 rounded-xl shadow-md transition-all">
+                            💾 Lưu Thông Tin Sản Phẩm
+                        </button>
+                    </form>
+
+                    <!-- Product Admin Table -->
+                    <div class="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-2xl">
+                        <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                            <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] uppercase font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="p-3">Sản phẩm</th>
+                                    <th class="p-3">Giá KM</th>
+                                    <th class="p-3">Thưởng Điểm</th>
+                                    <th class="p-3">Danh Mục</th>
+                                    <th class="p-3 text-right">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminProductTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ADMIN SECTION: USERS MANAGEMENT -->
+                <div id="adminSectionUsers" class="hidden space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-extrabold text-xs text-slate-800 dark:text-white">Quản Lý Danh Sách Mẹ Bỉm Trong Hệ Thống</h4>
+                        <span id="adminUserCountBadge" class="bg-purple-100 text-purple-800 text-[10px] font-bold px-2.5 py-1 rounded-full">0 mẹ bỉm</span>
+                    </div>
+
+                    <div class="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-2xl">
+                        <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                            <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] uppercase font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="p-3">Mẹ Bỉm</th>
+                                    <th class="p-3">Mã Ẩn</th>
                                     <th class="p-3">Số Dư Điểm</th>
-                                    <th class="p-3">Ngân Hàng & QR</th>
-                                    <th class="p-3 rounded-r-xl text-center">Thao Tác Admin</th>
+                                    <th class="p-3">STK Ngân Hàng</th>
+                                    <th class="p-3 text-right">Thao Tác Thưởng</th>
                                 </tr>
                             </thead>
                             <tbody id="adminUserTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
@@ -573,649 +759,467 @@
                     </div>
                 </div>
 
-                <!-- Admin Tab 2: Add & Manage Product -->
-                <div id="admSecProduct" class="hidden space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h4 class="font-extrabold text-xs text-slate-800 dark:text-white">Đăng Sản Phẩm / Món Đồ Review Mới</h4>
-                        <span class="text-[10px] text-slate-400">Hỗ trợ tải lên nhiều Ảnh & Video từ thiết bị!</span>
-                    </div>
-
-                    <form onsubmit="handleAdminSaveProduct(event)" class="space-y-3 text-xs">
-                        <div>
-                            <label class="block font-bold mb-1">Tên Sản Phẩm Review *</label>
-                            <input type="text" id="admPTitle" required placeholder="Ví dụ: Bình sữa Hegen 240ml PPSU" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 outline-none dark:text-white">
-                        </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                            <div>
-                                <label class="block font-bold mb-1">Giá VNĐ *</label>
-                                <input type="number" id="admPPrice" required placeholder="350000" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 outline-none dark:text-white font-mono">
-                            </div>
-                            <div>
-                                <label class="block font-bold mb-1">Điểm Thưởng *</label>
-                                <input type="number" id="admPReward" required placeholder="5000" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 outline-none dark:text-white font-mono">
-                            </div>
-                            <div>
-                                <label class="block font-bold mb-1">Danh Mục</label>
-                                <select id="admPCategory" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 outline-none dark:text-white">
-                                    <option value="bim-sua">🍼 Bỉm & Sữa</option>
-                                    <option value="so-sinh">👶 Đồ Sơ Sinh</option>
-                                    <option value="may-moc">🔌 Máy Móc</option>
-                                    <option value="an-dam">🥣 Ăn Dặm</option>
-                                    <option value="do-choi">🧸 Đồ Chơi</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block font-bold mb-1">Độ Tuổi Cho Bé</label>
-                                <select id="admPAgeStage" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 outline-none dark:text-white">
-                                    <option value="all">Tất cả giai đoạn</option>
-                                    <option value="so-sinh">Sơ sinh (0 - 6 tháng)</option>
-                                    <option value="an-dam">Ăn dặm (6 - 12 tháng)</option>
-                                    <option value="tap-di">Tập đi (1 - 3 tuổi)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Device Media Upload Section -->
-                        <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
-                            <label class="block font-bold mb-1 text-slate-700 dark:text-slate-200">
-                                📸 Tải Ảnh & Video Từ Thiết Bị (Chọn Nhiều Tệp) *
-                            </label>
-                            <input type="file" id="admPMediaFiles" accept="image/*,video/*" multiple onchange="handleAdminMediaUpload(event)" class="w-full text-xs text-slate-500">
-                            <div id="admMediaPreviewGrid" class="flex flex-wrap gap-2 mt-3 min-h-[50px] items-center">
-                                <span class="text-slate-400 italic text-[11px]" id="admMediaEmptyTip">Chưa chọn ảnh hoặc video từ máy...</span>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                            <div>
-                                <label class="block font-bold mb-1">Link Shopee Affiliate *</label>
-                                <input type="url" id="admPShopee" required placeholder="https://shope.ee/..." class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 outline-none dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block font-bold mb-1">Link Lazada</label>
-                                <input type="url" id="admPLazada" placeholder="https://s.lazada.vn/..." class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 outline-none dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block font-bold mb-1">Link TikTok Shop</label>
-                                <input type="url" id="admPTiktok" placeholder="https://vt.tiktok.com/..." class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 outline-none dark:text-white">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block font-bold mb-1">Mô Tả Review Chi Tiết</label>
-                            <textarea id="admPDesc" rows="3" required placeholder="Nêu cảm nhận thực tế..." class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 outline-none dark:text-white"></textarea>
-                        </div>
-                        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus-circle"></i> Đăng / Luân Chuyển Sản Phẩm
-                        </button>
-                    </form>
-
-                    <!-- Posted Products List & Delete Button -->
-                    <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
-                        <h4 class="font-extrabold text-xs text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-trash-can text-rose-500"></i> Xóa & Chỉnh Sửa Sản Phẩm Đã Đăng
-                        </h4>
-                        <div id="adminProductList" class="space-y-2 max-h-72 overflow-y-auto custom-scrollbar"></div>
-                    </div>
-                </div>
-
-                <!-- Admin Tab 3: Order Proofs -->
-                <div id="admSecOrder" class="hidden space-y-4">
-                    <h4 class="font-extrabold text-xs text-slate-800 dark:text-white">Duyệt Đơn Tích Điểm Từ Mẹ Bỉm</h4>
-                    <div class="overflow-x-auto custom-scrollbar">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                                <tr>
-                                    <th class="p-3 rounded-l-xl">Mã Đơn & Món Mua</th>
-                                    <th class="p-3">Thành Viên (ID)</th>
-                                    <th class="p-3">Bằng Chứng (Ảnh/Video)</th>
-                                    <th class="p-3">Điểm Duyệt</th>
-                                    <th class="p-3 rounded-r-xl text-center">Thao Tác Duyệt</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminOrderTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Admin Tab 4: Withdrawals -->
-                <div id="admSecWithdraw" class="hidden space-y-4">
-                    <h4 class="font-extrabold text-xs text-slate-800 dark:text-white">Duyệt Rút Tiền ATM Chuyển Khoản</h4>
-                    <div class="overflow-x-auto custom-scrollbar">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                                <tr>
-                                    <th class="p-3 rounded-l-xl">Mã Lệnh</th>
-                                    <th class="p-3">Thành Viên (ID)</th>
-                                    <th class="p-3">Số Tiền Rút</th>
-                                    <th class="p-3">STK & QR Ngân Hàng</th>
-                                    <th class="p-3 rounded-r-xl text-center">Duyệt Chuyển Tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminWithdrawTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Admin Tab 5: Dedicated Gemini AI Support Chat -->
-                <div id="admSecAi" class="hidden space-y-4">
-                    <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-4 shadow-lg border border-purple-800/50">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                            <div>
-                                <h4 class="font-black text-sm flex items-center gap-2 text-purple-300">
-                                    <i class="fa-solid fa-brain"></i> Trợ Lý Gemini AI Cao Cấp (Dành Riêng Cho Admin)
-                                </h4>
-                                <p class="text-[11px] text-purple-200 mt-0.5">Dán Gemini API Key của bạn để trò chuyện trực tiếp với AI trợ giúp viết review, xử lý khiếu nại, phát hiện spam hoặc tư vấn tính năng web.</p>
-                            </div>
-                            <div class="flex items-center gap-2 w-full md:w-auto">
-                                <label class="text-[10px] font-bold text-purple-200">Model AI:</label>
-                                <select id="adminGeminiModelSelect" class="bg-purple-950 text-white border border-purple-700 rounded-xl text-xs px-3 py-1.5 focus:outline-none">
-                                    <option value="gemini-3.1-flash-preview" selected>Gemini 3.1 Flash (Tối ưu nhất)</option>
-                                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-                                    <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro (Siêu thông minh)</option>
-                                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- API Key Input Field -->
-                        <div class="mt-3 flex gap-2">
-                            <div class="relative flex-1">
-                                <i class="fa-solid fa-key absolute left-3 top-2.5 text-purple-400 text-xs"></i>
-                                <input type="password" id="adminGeminiApiKey" placeholder="Dán Gemini API Key của Admin tại đây (AI Key được bảo mật)..." class="w-full bg-purple-950/80 border border-purple-700/80 text-white rounded-xl py-1.5 pl-8 pr-3 text-xs outline-none focus:border-purple-400">
-                            </div>
-                            <button onclick="saveAdminApiKey()" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow transition-all">
-                                Lưu Key
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- AI Chat Display Area -->
-                    <div id="adminAiChatContainer" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 h-80 overflow-y-auto custom-scrollbar space-y-3 text-xs">
-                        <div class="bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-900 text-purple-900 dark:text-purple-200 p-3 rounded-2xl max-w-lg">
-                            <p class="font-bold mb-1">🤖 Trợ lý AI Admin Góc Mẹ Bỉm sẵn sàng!</p>
-                            <p class="text-[11px] leading-relaxed">Xin chào Admin! Bạn có thể dán API Key Gemini ở trên và nhập bất kỳ câu hỏi nào. Tôi có thể trợ giúp viết bài review sản phẩm bỉm sữa, gợi ý chiến lược tặng thưởng, viết kịch bản trả lời mẹ bỉm hoặc xử lý báo cáo đơn hàng.</p>
-                        </div>
-                    </div>
-
-                    <!-- AI Prompt Recommendations -->
-                    <div class="flex flex-wrap gap-1.5 text-[11px]">
-                        <span class="text-slate-400 font-bold self-center">Gợi ý câu hỏi:</span>
-                        <button onclick="setAiPrompt('Gợi ý 5 ý tưởng bài đăng thu hút mẹ bỉm tham gia tích điểm')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 px-2.5 py-1 rounded-lg text-slate-700 dark:text-slate-300">💡 5 Ý tưởng kéo tương tác</button>
-                        <button onclick="setAiPrompt('Viết bài review đánh giá chi tiết bình sữa Hegen chuẩn kinh nghiệm mẹ bỉm')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 px-2.5 py-1 rounded-lg text-slate-700 dark:text-slate-300">📝 Viết review bình sữa</button>
-                        <button onclick="setAiPrompt('So sánh ưu nhược điểm giữa bỉm Moony Natural và bỉm Merries Nhật')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 px-2.5 py-1 rounded-lg text-slate-700 dark:text-slate-300">👶 So sánh Bỉm Moony & Merries</button>
-                    </div>
-
-                    <!-- Chat Input Box -->
-                    <div class="flex gap-2">
-                        <input type="text" id="adminAiInput" onkeydown="if(event.key==='Enter') sendAdminGeminiChat()" placeholder="Nhập tin nhắn hoặc yêu cầu hỗ trợ cho AI..." class="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl px-3 py-2.5 text-xs outline-none focus:border-purple-500">
-                        <button onclick="sendAdminGeminiChat()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-5 py-2.5 rounded-xl shadow transition-all flex items-center gap-1.5">
-                            <i class="fa-solid fa-paper-plane text-xs"></i> Gửi AI
-                        </button>
-                    </div>
-                </div>
-
             </div>
+
         </div>
     </div>
 
-    <!-- Profile Edit Modal -->
-    <div id="profileModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <!-- LEADERBOARD MODAL -->
+    <div id="leaderboardModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
         <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800">
-            <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="font-extrabold text-sm text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-gear text-rose-500"></i> Chỉnh Sửa Hồ Sơ Mẹ Bỉm
+            <button onclick="closeModal('leaderboardModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-amber-500"></i> Bảng Xếp Hạng Siêu Mẹ Bỉm
             </h3>
-            
-            <form onsubmit="handleSaveProfile(event)" class="space-y-3 text-xs">
-                <div class="text-center mb-3">
-                    <div class="relative w-20 h-20 mx-auto mb-2 rounded-2xl overflow-hidden bg-slate-100 border-2 border-rose-400 flex items-center justify-center">
-                        <img id="profileAvatarPreview" src="" alt="Avatar" class="w-full h-full object-cover hidden">
-                        <i id="profileAvatarPlaceholder" class="fa-solid fa-user text-3xl text-slate-300"></i>
-                    </div>
-                    <label class="cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 text-rose-600 px-3 py-1.5 rounded-xl text-[11px] font-bold border border-rose-200 dark:border-slate-700 inline-block">
-                        <i class="fa-solid fa-camera mr-1"></i> Đổi Avatar Từ Máy
-                        <input type="file" id="profileAvatarInput" accept="image/*" onchange="previewProfileAvatar(event)" class="hidden">
-                    </label>
-                </div>
-
-                <div>
-                    <label class="block font-bold mb-1">Tên Hiển Thị Mẹ Bỉm *</label>
-                    <input type="text" id="profileNameInput" required class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-2.5 outline-none dark:text-white">
-                </div>
-
-                <div>
-                    <label class="block font-bold mb-1">Mã Ẩn Định Danh (Secret ID) *</label>
-                    <input type="text" id="profileCodeInput" required class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-2.5 outline-none font-mono text-rose-500 font-bold">
-                </div>
-
-                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl shadow-md transition-all">
-                    Lưu Thay Đổi Hồ Sơ
-                </button>
-            </form>
+            <p class="text-xs text-slate-400 mb-4">Top các mẹ bỉm tích lũy được nhiều điểm đổi tiền ATM nhất!</p>
+            <div id="leaderboardList" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar"></div>
         </div>
     </div>
 
-    <!-- Admin Activity Log Inspector Modal -->
-    <div id="userActivityModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 max-h-[85vh] overflow-y-auto custom-scrollbar">
-            <button onclick="closeActivityModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+    <!-- TRANSACTION LOG MODAL -->
+    <div id="transactionLogModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800">
+            <button onclick="closeModal('transactionLogModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-rose-500"></i> Lịch Sử Tích & Rút Điểm
+            </h3>
+            <div id="transactionList" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <!-- CALCULATOR MODAL -->
+    <div id="calculatorModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 text-xs">
+            <button onclick="closeModal('calculatorModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-calculator text-rose-500"></i> Công Cụ Tính Hoàn Tiền
+            </h3>
+            <div class="space-y-3">
                 <div>
-                    <h3 class="font-extrabold text-sm text-slate-800 dark:text-white" id="activityUserTitle">Lịch Sử Hoạt Động Mẹ Bỉm ID: ...</h3>
-                    <p class="text-[10px] text-slate-400" id="activityUserSub">Bảo mật thông tin cá nhân & chống gian lận</p>
+                    <label class="block font-bold mb-1">Giá trị đơn hàng định mua (VNĐ):</label>
+                    <input type="number" id="calcPriceInput" oninput="calculateReward()" placeholder="500000" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl p-2.5 outline-none font-bold">
                 </div>
-                <button onclick="togglePrivacyMask()" id="privacyToggleBtn" class="text-xs bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1">
-                    <i class="fa-solid fa-eye-slash"></i> <span>Mở Khóa Dữ Liệu Bảo Mật</span>
-                </button>
+                <div>
+                    <label class="block font-bold mb-1">% Tỷ lệ hoàn điểm (Mặc định 5%):</label>
+                    <input type="number" id="calcPercentInput" value="5" oninput="calculateReward()" placeholder="5" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl p-2.5 outline-none font-bold">
+                </div>
+                <div class="bg-rose-50 dark:bg-rose-950/40 p-4 rounded-2xl border border-rose-200 dark:border-rose-900 text-center">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Số điểm nhận được & Tiền hoàn ATM:</p>
+                    <p class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1" id="calcResultDisplay">0 Điểm = 0 VNĐ</p>
+                </div>
             </div>
-
-            <div id="activityContent" class="space-y-4 text-xs"></div>
         </div>
     </div>
 
-    <!-- Lightbox Modal for Large Images & Videos -->
+    <!-- COMMUNITY MODAL -->
+    <div id="communityModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 text-xs">
+            <button onclick="closeModal('communityModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-users text-rose-500"></i> Góc Chia Sẻ Mẹ Bỉm (Realtime)
+            </h3>
+            <p class="text-[11px] text-slate-400 mb-3">Tâm sự kinh nghiệm chăm con, hỏi đáp về sản phẩm thực tế!</p>
+            
+            <form onsubmit="postCommunityMsg(event)" class="flex gap-2 mb-3">
+                <input type="text" id="communityMsgInput" placeholder="Nói gì đó với các mẹ bỉm khác..." required class="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl px-3 py-2 outline-none">
+                <button type="submit" class="bg-slate-900 dark:bg-rose-600 text-white font-bold px-4 py-2 rounded-xl">Đăng</button>
+            </form>
+
+            <div id="communityPostList" class="space-y-2 max-h-72 overflow-y-auto custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <!-- WISHLIST MODAL -->
+    <div id="wishlistModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800">
+            <button onclick="closeModal('wishlistModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-heart text-rose-500"></i> Sản Phẩm Đã Yêu Thích
+            </h3>
+            <div id="wishlistGrid" class="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <!-- REMINDER MODAL -->
+    <div id="reminderModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 text-xs">
+            <button onclick="closeModal('reminderModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-black text-sm text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-syringe text-emerald-500"></i> Lịch Tiêm Chủng Cho Bé
+            </h3>
+            <p class="text-[11px] text-slate-400 mb-3">Tra cứu mốc tiêm phòng quan trọng theo độ tuổi của trẻ:</p>
+            <div class="space-y-2 max-h-72 overflow-y-auto custom-scrollbar text-[11px]">
+                <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <p class="font-bold text-rose-600 dark:text-rose-400">Sơ sinh (24h đầu)</p>
+                    <p class="text-slate-600 dark:text-slate-300">Vắc-xin Lao (BCG), Viêm gan B (mũi 1).</p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <p class="font-bold text-rose-600 dark:text-rose-400">2 tháng tuổi</p>
+                    <p class="text-slate-600 dark:text-slate-300">Mũi 6 trong 1 (lần 1), Uống Rotavirus (lần 1), Phế cầu (lần 1).</p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <p class="font-bold text-rose-600 dark:text-rose-400">3 tháng tuổi</p>
+                    <p class="text-slate-600 dark:text-slate-300">Mũi 6 trong 1 (lần 2), Uống Rotavirus (lần 2), Phế cầu (lần 2).</p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <p class="font-bold text-rose-600 dark:text-rose-400">9 tháng tuổi</p>
+                    <p class="text-slate-600 dark:text-slate-300">Sởi đơn, Cúm mùa, Viêm não Nhật Bản (mũi 1).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div id="profileModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 text-xs text-center">
+            <button onclick="closeModal('profileModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div class="w-16 h-16 rounded-full bg-slate-900 dark:bg-rose-600 text-white font-black text-xl flex items-center justify-center mx-auto mb-3 shadow-md">
+                <span id="profileChar">M</span>
+            </div>
+            <h3 id="profileName" class="font-black text-sm text-slate-800 dark:text-white">Mẹ Bỉm</h3>
+            <p id="profileEmail" class="text-slate-400 text-[11px] mb-3">mebim@gmail.com</p>
+            <div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl mb-4 font-mono">
+                <p class="text-[10px] text-slate-400 uppercase font-bold">Mã Ẩn Tự Động:</p>
+                <p id="profileSecretCode" class="text-sm font-black text-rose-500">#...</p>
+            </div>
+            <button onclick="openWalletModal('wallet')" class="w-full bg-rose-600 text-white font-bold py-2.5 rounded-xl shadow-sm mb-2">Xem Ví & Ngân Hàng</button>
+            <button onclick="handleLogout()" class="w-full bg-slate-100 dark:bg-slate-800 text-rose-600 font-bold py-2.5 rounded-xl">Đăng Xuất</button>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX PREVIEW -->
     <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 hidden" onclick="closeLightbox()">
-        <button class="absolute top-4 right-4 text-white text-2xl"><i class="fa-solid fa-xmark"></i></button>
-        <img id="lightboxImg" src="" alt="Zoom" class="max-w-full max-h-[90vh] object-contain rounded-2xl hidden">
-        <video id="lightboxVid" src="" controls class="max-w-full max-h-[90vh] rounded-2xl hidden" onclick="event.stopPropagation()"></video>
+        <img id="lightboxImg" src="" class="max-w-full max-h-full rounded-2xl object-contain shadow-2xl">
     </div>
 
-    <!-- Auxiliary Features Modals (Leaderboard, Transactions, Community, Calculator, Vaccines) -->
-    <div id="auxModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-xl w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 max-h-[88vh] overflow-y-auto custom-scrollbar">
-            <button onclick="closeAuxModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <div id="auxModalTitle" class="font-black text-sm mb-4 pb-2 border-b border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white flex items-center gap-2"></div>
-            <div id="auxModalBody"></div>
-        </div>
-    </div>
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
-    <script>
-        const DEFAULT_PRODUCTS = [
+    <!-- FIREBASE MODULE & APPLICATION JAVASCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, query, where, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getDatabase, ref, set, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkqXlq95XB5PJDucbhYOJ1X4RdJkU0kmc",
+            authDomain: "me-bim-affiliateshopee.firebaseapp.com",
+            databaseURL: "https://me-bim-affiliateshopee-default-rtdb.firebaseio.com",
+            projectId: "me-bim-affiliateshopee",
+            storageBucket: "me-bim-affiliateshopee.firebasestorage.app",
+            messagingSenderId: "1067867377891",
+            appId: "1:1067867377891:web:b869fe4a596c316ad635d6",
+            measurementId: "G-J3SRMM8H24"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const rtdb = getDatabase(app);
+
+        const ADMIN_EMAIL = "trongsangheheboy@gmail.com";
+        const DEFAULT_ADMIN_PIN = "123456";
+
+        let currentUser = null;
+        let userData = { points: 0, bank: {}, wishlist: [], secretCode: '', isCheckinToday: false };
+        let products = [];
+        let filteredProducts = [];
+        let categories = [
+            { id: 'all', name: 'Tất Cả', icon: 'fa-border-all' },
+            { id: 'bim', name: 'Bỉm Tã', icon: 'fa-baby-carriage' },
+            { id: 'binh-sua', name: 'Bình Sữa', icon: 'fa-bottle-water' },
+            { id: 'sua-bot', name: 'Sữa Bột', icon: 'fa-jar' },
+            { id: 'an-dam', name: 'Đồ Ăn Dặm', icon: 'fa-bowl-food' },
+            { id: 'may-hut-sua', name: 'Máy Hút Sữa', icon: 'fa-pump-medical' },
+            { id: 'cham-soc', name: 'Chăm Sóc Bé', icon: 'fa-heart-pulse' }
+        ];
+        let ageStages = [
+            { id: 'all', name: 'Mọi Độ Tuổi' },
+            { id: '0-3m', name: 'Sơ Sinh (0-3m)' },
+            { id: '3-6m', name: '3-6 Tháng' },
+            { id: '6-12m', name: '6-12 Tháng' },
+            { id: '1-3y', name: '1-3 Tuổi' },
+            { id: 'me-bim', name: 'Mẹ Bỉm' }
+        ];
+
+        let selectedCategory = 'all';
+        let selectedAgeStage = 'all';
+        let searchQuery = '';
+        let sortOption = 'hot';
+        let isAdminUnlocked = false;
+
+        // Default seed products if database is empty
+        const INITIAL_PRODUCTS = [
             {
                 id: 'prod_1',
-                title: 'Bình Sữa Hegen PPSU 240ml Chính Hãng',
-                price: 520000,
-                rewardPoints: 10000,
-                category: 'bim-sua',
-                ageStage: 'so-sinh',
+                title: 'Bỉm quần Moony Natural size L (54 miếng)',
+                category: 'bim',
+                ageStage: '6-12m',
+                originalPrice: 450000,
+                price: 389000,
+                rewardPercent: 5,
                 rating: 4.9,
-                media: [
-                    { type: 'image', url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80' }
-                ],
-                shopeeUrl: 'https://shope.ee',
-                lazadaUrl: 'https://s.lazada.vn',
-                tiktokUrl: 'https://vt.tiktok.com',
-                desc: 'Bình sữa Hegen chống sặc cao cấp cho bé sơ sinh, thiết kế núm nghiêng tự nhiên.'
+                img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=500&auto=format&fit=crop&q=60',
+                affLink: 'https://shope.ee/example1',
+                desc: 'Bỉm siêu mềm mại từ bông hữu cơ, thấm hút đến 12 giờ cho bé yêu giấc ngủ ngon.'
             },
             {
                 id: 'prod_2',
-                title: 'Tã Bỉm Dán Moony Natural Size M (46 miếng)',
-                price: 380000,
-                rewardPoints: 7500,
-                category: 'bim-sua',
-                ageStage: 'so-sinh',
-                rating: 4.8,
-                media: [
-                    { type: 'image', url: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600&auto=format&fit=crop&q=80' }
-                ],
-                shopeeUrl: 'https://shope.ee',
-                desc: 'Bỉm bông hữu cơ 100% nhập khẩu Nhật Bản, siêu mềm mại không lo hăm bí.'
+                title: 'Bình sữa Hegen PPSU 240ml núm ty vừa',
+                category: 'binh-sua',
+                ageStage: '3-6m',
+                originalPrice: 590000,
+                price: 495000,
+                rewardPercent: 6,
+                rating: 5.0,
+                img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60',
+                affLink: 'https://shope.ee/example2',
+                desc: 'Thiết kế dáng vuông chống sặc độc quyền, cổ rộng dễ vệ sinh tuyệt đối.'
             },
             {
                 id: 'prod_3',
-                title: 'Máy Hút Sữa Điện Đôi Fatzbaby Resonance 3',
-                price: 1450000,
-                rewardPoints: 25000,
-                category: 'may-moc',
-                ageStage: 'so-sinh',
-                rating: 5.0,
-                media: [
-                    { type: 'image', url: 'https://images.unsplash.com/photo-1555255707-c07966088b7b?w=600&auto=format&fit=crop&q=80' }
-                ],
-                shopeeUrl: 'https://shope.ee',
-                desc: 'Máy hút sữa điện đôi massage êm ái, lực hút kiệt sữa kích sữa tốt cho mẹ.'
+                title: 'Máy hút sữa không dây Fatzbaby Freemax 1',
+                category: 'may-hut-sua',
+                ageStage: 'me-bim',
+                originalPrice: 1250000,
+                price: 990000,
+                rewardPercent: 8,
+                rating: 4.8,
+                img: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=500&auto=format&fit=crop&q=60',
+                affLink: 'https://shope.ee/example3',
+                desc: 'Nhỏ gọn rảnh tay mặc trong áo áo bra, 3 chế độ hút êm ái kích sữa vượt trội.'
             },
             {
                 id: 'prod_4',
-                title: 'Nồi Nấu Chậm Ăn Dặm Bear 0.8L Tự Động',
-                price: 420000,
-                rewardPoints: 8000,
+                title: 'Ghế ăn dặm Mambobaby đa năng gấp gọn',
                 category: 'an-dam',
-                ageStage: 'an-dam',
+                ageStage: '6-12m',
+                originalPrice: 850000,
+                price: 690000,
+                rewardPercent: 5,
                 rating: 4.7,
-                media: [
-                    { type: 'image', url: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80' }
-                ],
-                shopeeUrl: 'https://shope.ee',
-                desc: 'Nồi chưng yến nấu cháo cách thủy hầm nhừ nhẵn giữ trọn dưỡng chất cho bé ăn dặm.'
+                img: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=500&auto=format&fit=crop&q=60',
+                affLink: 'https://shope.ee/example4',
+                desc: 'Khay ăn kép dễ tháo rửa, đai an toàn 5 điểm chắc chắn hỗ trợ bé tự ăn BLW.'
             }
         ];
 
-        // State Storage
-        let currentUser = JSON.parse(localStorage.getItem('mb_user')) || null;
-        let products = JSON.parse(localStorage.getItem('mb_products')) || DEFAULT_PRODUCTS;
-        let users = JSON.parse(localStorage.getItem('mb_users')) || [];
-        let orderProofs = JSON.parse(localStorage.getItem('mb_proofs')) || [];
-        let withdrawals = JSON.parse(localStorage.getItem('mb_withdrawals')) || [];
-        let communityPosts = JSON.parse(localStorage.getItem('mb_posts')) || [];
-        let productComments = JSON.parse(localStorage.getItem('mb_comments')) || {};
-        let wishlists = JSON.parse(localStorage.getItem('mb_wishlists')) || [];
-        let adminApiKey = localStorage.getItem('mb_gemini_key') || '';
-
-        let currentCategoryFilter = 'all';
-        let currentAgeFilter = 'all';
-        let currentSort = 'hot';
-        let isPrivacyMasked = true;
-        let tempAdminMedia = []; // Stores Base64 media for new product
-        let tempProofMedia = null;
-        let tempQrMedia = null;
-        let tempProfileAvatar = null;
-        let currentActiveProofProdId = null;
-
         window.addEventListener('DOMContentLoaded', () => {
-            syncLocalStorage();
+            initTheme();
             renderCategories();
             renderAgeStages();
-            renderProducts();
-            updateUserUI();
-
-            if (adminApiKey) {
-                const keyInput = document.getElementById('adminGeminiApiKey');
-                if (keyInput) keyInput.value = adminApiKey;
-            }
+            setupFirebaseListeners();
         });
 
-        function syncLocalStorage() {
-            localStorage.setItem('mb_products', JSON.stringify(products));
-            localStorage.setItem('mb_users', JSON.stringify(users));
-            localStorage.setItem('mb_proofs', JSON.stringify(orderProofs));
-            localStorage.setItem('mb_withdrawals', JSON.stringify(withdrawals));
-            localStorage.setItem('mb_posts', JSON.stringify(communityPosts));
-            localStorage.setItem('mb_comments', JSON.stringify(productComments));
-            localStorage.setItem('mb_wishlists', JSON.stringify(wishlists));
-            if (currentUser) localStorage.setItem('mb_user', JSON.stringify(currentUser));
-        }
-
-        function openAuthModal(tab = 'login') {
-            document.getElementById('authModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('authModal').classList.remove('opacity-0'), 10);
-            switchAuthTab(tab);
-        }
-
-        function closeAuthModal() {
-            document.getElementById('authModal').classList.add('opacity-0');
-            setTimeout(() => document.getElementById('authModal').classList.add('hidden'), 200);
-        }
-
-        function switchAuthTab(tab) {
-            const isReg = tab === 'register';
-            document.getElementById('displayNameField').classList.toggle('hidden', !isReg);
-            document.getElementById('authNote').classList.toggle('hidden', !isReg);
-            document.getElementById('tabLogin').className = !isReg ? 'flex-1 py-3 text-xs font-black border-b-2 border-slate-900 dark:border-rose-500 text-slate-900 dark:text-rose-400' : 'flex-1 py-3 text-xs font-black border-b-2 border-transparent text-slate-400';
-            document.getElementById('tabRegister').className = isReg ? 'flex-1 py-3 text-xs font-black border-b-2 border-slate-900 dark:border-rose-500 text-slate-900 dark:text-rose-400' : 'flex-1 py-3 text-xs font-black border-b-2 border-transparent text-slate-400';
-            document.getElementById('authSubmitBtn').textContent = isReg ? 'Đăng Ký Khởi Tạo' : 'Đăng Nhập';
-            document.getElementById('authForm').dataset.mode = tab;
-        }
-
-        function handleAuthSubmit(e) {
-            e.preventDefault();
-            const mode = document.getElementById('authForm').dataset.mode;
-            const email = document.getElementById('authEmail').value.trim();
-            const password = document.getElementById('authPassword').value;
-            const name = document.getElementById('authName').value.trim();
-
-            if (mode === 'register') {
-                const existing = users.find(u => u.email === email);
-                if (existing) return alert('Email này đã được đăng ký!');
-                
-                const secretCode = '#' + Math.floor(100000 + Math.random() * 900000);
-                const newUser = {
-                    id: 'usr_' + Date.now(),
-                    email,
-                    password,
-                    name: name || 'Mẹ Bỉm ' + secretCode.slice(-4),
-                    secretCode,
-                    points: 1000,
-                    isAdmin: email.toLowerCase().includes('admin'),
-                    isBlocked: false,
-                    bankInfo: null,
-                    avatarUrl: '',
-                    createdAt: new Date().toISOString(),
-                    logs: [`Đăng ký tài khoản nhận +1,000 điểm thưởng.`]
-                };
-                users.push(newUser);
-                currentUser = newUser;
-                alert('🎉 Đăng ký thành công! Đã cộng +1.000đ thưởng vào ví.');
-            } else {
-                const user = users.find(u => u.email === email && u.password === password);
-                if (!user) return alert('Sai email hoặc mật khẩu!');
-                if (user.isBlocked) return alert('🚫 Tài khoản này đã bị chăn do nghi vấn spam!');
+        function setupFirebaseListeners() {
+            // Realtime Auth state
+            onAuthStateChanged(auth, async (user) => {
                 currentUser = user;
-            }
+                if (user) {
+                    document.getElementById('authGuestButtons').classList.add('hidden');
+                    document.getElementById('userLoggedInContainer').classList.remove('hidden');
+                    
+                    const char = (user.displayName || user.email || 'M')[0].toUpperCase();
+                    document.getElementById('userAvatarChar').innerText = char;
+                    document.getElementById('profileChar').innerText = char;
+                    document.getElementById('profileEmail').innerText = user.email;
+                    document.getElementById('profileName').innerText = user.displayName || 'Mẹ Bỉm';
+                    document.getElementById('walletUserName').innerText = 'Ví Điểm: ' + (user.displayName || 'Mẹ Bỉm');
 
-            syncLocalStorage();
-            updateUserUI();
-            closeAuthModal();
-        }
+                    // Show Admin button if hardcoded email match
+                    if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                        document.getElementById('adminBtn').classList.remove('hidden');
+                    } else {
+                        document.getElementById('adminBtn').classList.add('hidden');
+                    }
 
-        function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('mb_user');
-            updateUserUI();
-            alert('Đã đăng xuất tài khoản.');
+                    // Sync User Document in Firestore
+                    const userRef = doc(db, "users", user.uid);
+                    onSnapshot(userRef, (docSnap) => {
+                        if (docSnap.exists()) {
+                            userData = docSnap.data();
+                        } else {
+                            // Create default profile
+                            const secretCode = '#' + Math.floor(100000 + Math.random() * 900000);
+                            userData = {
+                                uid: user.uid,
+                                email: user.email,
+                                name: user.displayName || 'Mẹ Bỉm',
+                                points: 1000, // Registration bonus
+                                secretCode: secretCode,
+                                bank: {},
+                                wishlist: []
+                            };
+                            setDoc(userRef, userData);
+                        }
+                        updateUserUI();
+                    });
+
+                } else {
+                    document.getElementById('authGuestButtons').classList.remove('hidden');
+                    document.getElementById('userLoggedInContainer').classList.add('hidden');
+                    document.getElementById('heroUserCode').innerText = '#CHƯA_ĐĂNG_NHẬP';
+                    document.getElementById('adminBtn').classList.add('hidden');
+                }
+            });
+
+            // Sync Products from Firestore
+            onSnapshot(collection(db, "products"), (snapshot) => {
+                let list = [];
+                snapshot.forEach(doc => {
+                    list.push({ id: doc.id, ...doc.data() });
+                });
+                if (list.length === 0) {
+                    // Seed initial products
+                    INITIAL_PRODUCTS.forEach(p => {
+                        setDoc(doc(db, "products", p.id), p);
+                    });
+                    products = INITIAL_PRODUCTS;
+                } else {
+                    products = list;
+                }
+                applyFilters();
+            });
+
+            // Sync Community Posts Realtime Database
+            const commRef = ref(rtdb, 'community_posts');
+            onValue(commRef, (snapshot) => {
+                const data = snapshot.val();
+                const listEl = document.getElementById('communityPostList');
+                if (!data) {
+                    listEl.innerHTML = '<p class="text-slate-400 italic text-center py-4">Chưa có bài viết nào.</p>';
+                    return;
+                }
+                const posts = Object.values(data).reverse();
+                listEl.innerHTML = posts.map(p => `
+                    <div class="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-rose-600 dark:text-rose-400">${escapeHtml(p.author)}</span>
+                            <span class="text-[10px] text-slate-400">${p.time}</span>
+                        </div>
+                        <p class="text-slate-700 dark:text-slate-200">${escapeHtml(p.text)}</p>
+                    </div>
+                `).join('');
+            });
         }
 
         function updateUserUI() {
-            const guestBtns = document.getElementById('authGuestButtons');
-            const userContainer = document.getElementById('userLoggedInContainer');
-            const adminBtn = document.getElementById('adminBtn');
-            const heroCode = document.getElementById('heroUserCode');
+            const points = userData.points || 0;
+            document.getElementById('userPointsDisplay').innerText = points.toLocaleString('vi-VN');
+            document.getElementById('modalUserPoints').innerText = points.toLocaleString('vi-VN');
+            document.getElementById('modalUserVnd').innerText = points.toLocaleString('vi-VN');
+            
+            const code = userData.secretCode || '#MEBIM';
+            document.getElementById('heroUserCode').innerText = code;
+            document.getElementById('userSecretCode').innerText = code;
+            document.getElementById('profileSecretCode').innerText = code;
 
-            if (currentUser) {
-                guestBtns.classList.add('hidden');
-                userContainer.classList.remove('hidden');
-                document.getElementById('userPointsDisplay').textContent = currentUser.points.toLocaleString();
-                document.getElementById('walletUserName').textContent = currentUser.name;
-                document.getElementById('userSecretCode').textContent = currentUser.secretCode;
-                heroCode.textContent = currentUser.secretCode;
-
-                // Avatar rendering
-                const avatarChar = document.getElementById('userAvatarChar');
-                const avatarImg = document.getElementById('userAvatarImg');
-                if (currentUser.avatarUrl) {
-                    avatarChar.classList.add('hidden');
-                    avatarImg.src = currentUser.avatarUrl;
-                    avatarImg.classList.remove('hidden');
-                } else {
-                    avatarChar.classList.remove('hidden');
-                    avatarChar.textContent = currentUser.name.charAt(0).toUpperCase();
-                    avatarImg.classList.add('hidden');
+            if (userData.bank && userData.bank.bankName) {
+                document.getElementById('bankName').value = userData.bank.bankName || '';
+                document.getElementById('bankAccount').value = userData.bank.bankAccount || '';
+                document.getElementById('bankHolder').value = userData.bank.bankHolder || '';
+                if (userData.bank.qrUrl) {
+                    document.getElementById('qrPreviewContainer').classList.remove('hidden');
+                    document.getElementById('qrPreviewImg').src = userData.bank.qrUrl;
                 }
-
-                if (currentUser.isAdmin) adminBtn.classList.remove('hidden');
-                else adminBtn.classList.add('hidden');
-            } else {
-                guestBtns.classList.remove('hidden');
-                userContainer.classList.add('hidden');
-                heroCode.textContent = '#CHƯA_ĐĂNG_NHẬP';
             }
         }
-
-        function openProfileModal() {
-            if (!currentUser) return openAuthModal();
-            document.getElementById('profileNameInput').value = currentUser.name;
-            document.getElementById('profileCodeInput').value = currentUser.secretCode;
-            const imgPreview = document.getElementById('profileAvatarPreview');
-            const placeholder = document.getElementById('profileAvatarPlaceholder');
-            if (currentUser.avatarUrl) {
-                imgPreview.src = currentUser.avatarUrl;
-                imgPreview.classList.remove('hidden');
-                placeholder.classList.add('hidden');
-            } else {
-                imgPreview.classList.add('hidden');
-                placeholder.classList.remove('hidden');
-            }
-            document.getElementById('profileModal').classList.remove('hidden');
-        }
-
-        function closeProfileModal() {
-            document.getElementById('profileModal').classList.add('hidden');
-        }
-
-        function previewProfileAvatar(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                tempProfileAvatar = evt.target.result;
-                const imgPreview = document.getElementById('profileAvatarPreview');
-                const placeholder = document.getElementById('profileAvatarPlaceholder');
-                imgPreview.src = tempProfileAvatar;
-                imgPreview.classList.remove('hidden');
-                placeholder.classList.add('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function handleSaveProfile(e) {
-            e.preventDefault();
-            if (!currentUser) return;
-            const newName = document.getElementById('profileNameInput').value.trim();
-            const newCode = document.getElementById('profileCodeInput').value.trim();
-
-            currentUser.name = newName;
-            currentUser.secretCode = newCode;
-            if (tempProfileAvatar) currentUser.avatarUrl = tempProfileAvatar;
-
-            const uIdx = users.findIndex(u => u.id === currentUser.id);
-            if (uIdx !== -1) users[uIdx] = currentUser;
-
-            syncLocalStorage();
-            updateUserUI();
-            closeProfileModal();
-            alert('✅ Đã cập nhật hồ sơ cá nhân thành công!');
-        }
-
-        const CATEGORIES = [
-            { id: 'all', name: 'Tất Cả Món Đồ', icon: 'fa-cubes' },
-            { id: 'bim-sua', name: '🍼 Bỉm & Sữa', icon: 'fa-baby-carriage' },
-            { id: 'so-sinh', name: '👶 Đồ Sơ Sinh', icon: 'fa-child' },
-            { id: 'may-moc', name: '🔌 Máy Móc', icon: 'fa-plug' },
-            { id: 'an-dam', name: '🥣 Ăn Dặm', icon: 'fa-bowl-food' },
-            { id: 'do-choi', name: '🧸 Đồ Chơi', icon: 'fa-gamepad' },
-        ];
-
-        const AGE_STAGES = [
-            { id: 'all', name: 'Tất cả độ tuổi' },
-            { id: 'so-sinh', name: 'Sơ sinh (0 - 6 tháng)' },
-            { id: 'an-dam', name: 'Ăn dặm (6 - 12 tháng)' },
-            { id: 'tap-di', name: 'Tập đi (1 - 3 tuổi)' },
-        ];
 
         function renderCategories() {
             const container = document.getElementById('categoryContainer');
-            container.innerHTML = CATEGORIES.map(c => `
-                <button onclick="setCategoryFilter('${c.id}')" class="px-3.5 py-2 rounded-2xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-1.5 ${currentCategoryFilter === c.id ? 'bg-slate-900 dark:bg-rose-600 text-white shadow-md' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100'}">
-                    <i class="fa-solid ${c.icon}"></i>
-                    <span>${c.name}</span>
+            container.innerHTML = categories.map(cat => `
+                <button onclick="setCategory('${cat.id}')" class="px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${selectedCategory === cat.id ? 'bg-slate-900 text-white dark:bg-rose-600 shadow-sm' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100'}">
+                    <i class="fa-solid ${cat.icon} text-xs"></i>
+                    <span>${cat.name}</span>
                 </button>
             `).join('');
         }
 
         function renderAgeStages() {
             const container = document.getElementById('ageStageContainer');
-            container.innerHTML = AGE_STAGES.map(a => `
-                <button onclick="setAgeFilter('${a.id}')" class="px-3 py-1 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all ${currentAgeFilter === a.id ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 font-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700'}">
-                    ${a.name}
+            container.innerHTML = ageStages.map(stage => `
+                <button onclick="setAgeStage('${stage.id}')" class="px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all ${selectedAgeStage === stage.id ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 border border-rose-300' : 'bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 hover:bg-slate-200'}">
+                    ${stage.name}
                 </button>
             `).join('');
         }
 
-        function setCategoryFilter(cat) {
-            currentCategoryFilter = cat;
-            renderCategories();
-            renderProducts();
-        }
+        function applyFilters() {
+            filteredProducts = products.filter(p => {
+                const matchCat = selectedCategory === 'all' || p.category === selectedCategory;
+                const matchAge = selectedAgeStage === 'all' || p.ageStage === selectedAgeStage;
+                const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchCat && matchAge && matchSearch;
+            });
 
-        function setAgeFilter(age) {
-            currentAgeFilter = age;
-            renderAgeStages();
-            renderProducts();
-        }
+            // Sorting
+            if (sortOption === 'price-low') filteredProducts.sort((a,b) => a.price - b.price);
+            else if (sortOption === 'price-high') filteredProducts.sort((a,b) => b.price - a.price);
+            else if (sortOption === 'reward') filteredProducts.sort((a,b) => b.rewardPercent - a.rewardPercent);
+            else if (sortOption === 'rating') filteredProducts.sort((a,b) => b.rating - a.rating);
 
-        function handleSort() {
-            currentSort = document.getElementById('sortSelect').value;
             renderProducts();
         }
 
         function renderProducts() {
             const grid = document.getElementById('productGrid');
-            const empty = document.getElementById('emptyState');
+            const emptyState = document.getElementById('emptyState');
             const countEl = document.getElementById('productCount');
-            const query = (document.getElementById('searchInput')?.value || document.getElementById('mobileSearchInput')?.value || '').toLowerCase();
 
-            let list = products.filter(p => {
-                const matchCat = currentCategoryFilter === 'all' || p.category === currentCategoryFilter;
-                const matchAge = currentAgeFilter === 'all' || p.ageStage === currentAgeFilter;
-                const matchQ = p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query);
-                return matchCat && matchAge && matchQ;
-            });
+            countEl.innerText = `Hiển thị ${filteredProducts.length} sản phẩm dành cho mẹ & bé`;
 
-            if (currentSort === 'rating') list.sort((a,b) => b.rating - a.rating);
-            else if (currentSort === 'reward') list.sort((a,b) => b.rewardPoints - a.rewardPoints);
-            else if (currentSort === 'price-low') list.sort((a,b) => a.price - b.price);
-            else if (currentSort === 'price-high') list.sort((a,b) => b.price - a.price);
-
-            countEl.textContent = `Hiển thị ${list.length} món đồ review & tích điểm`;
-
-            if (list.length === 0) {
+            if (filteredProducts.length === 0) {
                 grid.innerHTML = '';
-                empty.classList.remove('hidden');
+                emptyState.classList.remove('hidden');
                 return;
             }
-            empty.classList.add('hidden');
 
-            grid.innerHTML = list.map(p => {
-                const isFav = wishlists.includes(p.id);
-                const firstMedia = p.media && p.media[0] ? p.media[0] : { type: 'image', url: 'https://placehold.co/400x400' };
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filteredProducts.map(p => {
+                const rewardPoints = Math.round((p.price * p.rewardPercent) / 100);
+                const isFav = userData.wishlist && userData.wishlist.includes(p.id);
 
                 return `
-                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
-                        <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden cursor-pointer" onclick="openDetailModal('${p.id}')">
-                            ${firstMedia.type === 'video' ? `
-                                <video src="${firstMedia.url}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" muted loop autoplay></video>
-                            ` : `
-                                <img src="${firstMedia.url}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            `}
-                            
-                            <span class="absolute top-2.5 left-2.5 bg-rose-600 text-white text-[10px] font-black px-2.5 py-1 rounded-xl shadow-md">
-                                +${p.rewardPoints.toLocaleString()} đ
-                            </span>
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col group relative">
+                        <button onclick="toggleWishlist('${p.id}')" class="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center text-rose-500 shadow-sm hover:scale-110 transition-transform">
+                            <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart text-xs"></i>
+                        </button>
 
-                            <button onclick="toggleWishlist(event, '${p.id}')" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center text-rose-500 hover:scale-110 transition-all shadow-sm">
-                                <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart text-xs"></i>
-                            </button>
+                        <div class="relative pt-[100%] overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer" onclick="openDetailModal('${p.id}')">
+                            <img src="${p.img}" alt="${escapeHtml(p.title)}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x400/fff1f2/e11d48?text=GocMeBim'">
+                            <span class="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-extrabold px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                <i class="fa-solid fa-coins text-amber-400"></i> +${rewardPoints.toLocaleString('vi-VN')} điểm
+                            </span>
                         </div>
 
-                        <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between">
+                        <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2">
                             <div>
-                                <h3 onclick="openDetailModal('${p.id}')" class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-slate-100 line-clamp-2 cursor-pointer hover:text-rose-600 dark:hover:text-rose-400 transition-colors leading-snug">
-                                    ${p.title}
+                                <h3 onclick="openDetailModal('${p.id}')" class="font-black text-xs sm:text-sm text-slate-800 dark:text-white line-clamp-2 cursor-pointer hover:text-rose-600 transition-colors leading-snug">
+                                    ${escapeHtml(p.title)}
                                 </h3>
-                                <div class="flex items-center gap-1.5 mt-1.5 text-[11px]">
-                                    <span class="font-black text-rose-600 dark:text-rose-400">${p.price.toLocaleString()}đ</span>
-                                    <span class="text-slate-400">• ⭐ ${p.rating}</span>
+                                <div class="flex items-center gap-1.5 mt-1">
+                                    <span class="text-amber-400 text-[11px] font-black"><i class="fa-solid fa-star"></i> ${p.rating || 5.0}</span>
+                                    <span class="text-[10px] text-slate-400">• Đã review</span>
                                 </div>
                             </div>
 
-                            <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-1.5">
-                                <a href="${p.shopeeUrl}" target="_blank" class="flex-1 bg-slate-900 hover:bg-slate-800 dark:bg-rose-600 text-white font-black text-[10px] py-2 px-2.5 rounded-xl text-center shadow-sm transition-all truncate">
-                                    🛒 Mua Ngay
-                                </a>
-                                <button onclick="selectProductForProof('${p.id}')" class="bg-rose-50 dark:bg-slate-800 hover:bg-rose-100 text-rose-600 dark:text-rose-400 font-extrabold text-[10px] py-2 px-2.5 rounded-xl transition-all border border-rose-200 dark:border-slate-700 whitespace-nowrap">
-                                    +Tích Điểm
-                                </button>
+                            <div>
+                                <div class="flex items-baseline gap-1.5">
+                                    <span class="font-black text-sm sm:text-base text-rose-600 dark:text-rose-400">${p.price.toLocaleString('vi-VN')}đ</span>
+                                    ${p.originalPrice ? `<span class="text-[10px] text-slate-400 line-through">${p.originalPrice.toLocaleString('vi-VN')}đ</span>` : ''}
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-1.5 mt-2.5">
+                                    <a href="${p.affLink}" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-[11px] py-2 px-2 rounded-xl text-center transition-colors flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-cart-shopping text-[10px]"></i> Sắm Đồ
+                                    </a>
+                                    <button onclick="selectProductForProofDirect('${p.id}', '${escapeHtml(p.title)}')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-extrabold text-[11px] py-2 px-2 rounded-xl text-center transition-colors flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-plus text-[10px]"></i> Tích Điểm
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1223,907 +1227,801 @@
             }).join('');
         }
 
-        function openDetailModal(id) {
-            const p = products.find(prod => prod.id === id);
-            if (!p) return;
-            const content = document.getElementById('modalContent');
+        window.setCategory = function(catId) {
+            selectedCategory = catId;
+            renderCategories();
+            applyFilters();
+        };
+
+        window.setAgeStage = function(stageId) {
+            selectedAgeStage = stageId;
+            renderAgeStages();
+            applyFilters();
+        };
+
+        window.handleSearch = function(type) {
+            searchQuery = type === 'mobile' ? document.getElementById('mobileSearchInput').value : document.getElementById('searchInput').value;
+            applyFilters();
+        };
+
+        window.handleSort = function() {
+            sortOption = document.getElementById('sortSelect').value;
+            applyFilters();
+        };
+
+        window.resetFilters = function() {
+            selectedCategory = 'all';
+            selectedAgeStage = 'all';
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            renderCategories();
+            renderAgeStages();
+            applyFilters();
+        };
+
+        window.toggleTheme = function() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon text-base';
+        };
+
+        function initTheme() {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400';
+            }
+        }
+
+        window.toggleNotificationPanel = function() {
+            document.getElementById('notifPanel').classList.toggle('hidden');
+        };
+
+        window.openAuthModal = function(tab) {
+            switchAuthTab(tab);
+            openModal('authModal');
+        };
+
+        window.closeAuthModal = function() {
+            closeModal('authModal');
+        };
+
+        window.switchAuthTab = function(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('tabLogin').className = isLogin ? 'flex-1 py-3 text-xs font-black border-b-2 border-slate-900 dark:border-rose-500 text-slate-900 dark:text-rose-400' : 'flex-1 py-3 text-xs font-black border-b-2 border-transparent text-slate-400 hover:text-slate-600';
+            document.getElementById('tabRegister').className = !isLogin ? 'flex-1 py-3 text-xs font-black border-b-2 border-slate-900 dark:border-rose-500 text-slate-900 dark:text-rose-400' : 'flex-1 py-3 text-xs font-black border-b-2 border-transparent text-slate-400 hover:text-slate-600';
             
-            content.innerHTML = `
-                <div class="p-6 space-y-4">
-                    <div class="flex flex-col md:flex-row gap-5">
-                        <div class="w-full md:w-1/2">
-                            <!-- Multi-media Slider / Display -->
-                            <div class="space-y-2">
-                                <div id="mainMediaBox" class="aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 dark:border-slate-800">
-                                    ${p.media && p.media[0] && p.media[0].type === 'video' ? `
-                                        <video src="${p.media[0].url}" controls class="w-full h-full object-cover"></video>
-                                    ` : `
-                                        <img src="${p.media && p.media[0] ? p.media[0].url : ''}" class="w-full h-full object-cover">
-                                    `}
-                                </div>
-                                <div class="flex gap-2 overflow-x-auto custom-scrollbar pb-1">
-                                    ${(p.media || []).map((m, idx) => `
-                                        <button onclick="switchMainMedia('${m.url}', '${m.type}')" class="w-14 h-14 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 flex-shrink-0">
-                                            ${m.type === 'video' ? `<div class="bg-black text-white w-full h-full flex items-center justify-center text-xs"><i class="fa-solid fa-play"></i></div>` : `<img src="${m.url}" class="w-full h-full object-cover">`}
-                                        </button>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>
+            document.getElementById('displayNameField').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('authNote').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('authSubmitBtn').innerText = isLogin ? 'Đăng Nhập' : 'Tạo Tài Khoản (+1.000đ)';
+            document.getElementById('authForm').dataset.mode = tab;
+        };
 
-                        <div class="w-full md:w-1/2 space-y-3 text-xs">
-                            <span class="bg-rose-100 dark:bg-rose-950 text-rose-600 font-extrabold text-[10px] px-2.5 py-1 rounded-full uppercase">Review Chi Tiết</span>
-                            <h2 class="text-base font-black text-slate-900 dark:text-white">${p.title}</h2>
-                            
-                            <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 p-3 rounded-2xl text-amber-800 dark:text-amber-300">
-                                <p class="font-extrabold">💰 Mua sản phẩm này nhận ngay:</p>
-                                <p class="text-lg font-black text-rose-600 dark:text-rose-400">+${p.rewardPoints.toLocaleString()} điểm (~${p.rewardPoints.toLocaleString()} VNĐ)</p>
-                            </div>
-
-                            <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">${p.desc}</p>
-
-                            <div class="pt-2 space-y-2">
-                                <a href="${p.shopeeUrl}" target="_blank" class="w-full bg-slate-900 dark:bg-rose-600 hover:bg-slate-800 text-white font-black py-3 rounded-xl block text-center shadow-md">
-                                    🛒 Sang Shopee Mua Sắm Nhận Mã Đơn
-                                </a>
-                                <button onclick="selectProductForProof('${p.id}')" class="w-full bg-rose-50 dark:bg-slate-800 hover:bg-rose-100 text-rose-600 dark:text-rose-300 font-extrabold py-2.5 rounded-xl border border-rose-200 dark:border-slate-700">
-                                    ➕ Gửi Mã Đơn Hàng Tích Điểm
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            renderProductComments(id);
-            document.getElementById('detailModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('detailModal').classList.remove('opacity-0'), 10);
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('opacity-0');
-            setTimeout(() => document.getElementById('detailModal').classList.add('hidden'), 200);
-        }
-
-        function switchMainMedia(url, type) {
-            const box = document.getElementById('mainMediaBox');
-            if (type === 'video') {
-                box.innerHTML = `<video src="${url}" controls class="w-full h-full object-cover"></video>`;
-            } else {
-                box.innerHTML = `<img src="${url}" class="w-full h-full object-cover">`;
-            }
-        }
-
-        function openProductSelectorForProof() {
-            if (!currentUser) return openAuthModal();
-            openProductSelectorModal();
-        }
-
-        function openProductSelectorModal() {
-            const listContainer = document.getElementById('productPickerList');
-            listContainer.innerHTML = products.map(p => `
-                <div onclick="confirmProductSelection('${p.id}')" class="p-2.5 bg-slate-50 dark:bg-slate-800/80 hover:bg-rose-50 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between cursor-pointer transition-colors">
-                    <div class="flex items-center gap-2">
-                        <img src="${p.media && p.media[0] ? p.media[0].url : ''}" class="w-10 h-10 object-cover rounded-lg">
-                        <div>
-                            <p class="font-extrabold text-xs text-slate-800 dark:text-white line-clamp-1">${p.title}</p>
-                            <p class="text-[10px] text-rose-500 font-bold">+${p.rewardPoints.toLocaleString()}đ</p>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-circle-check text-slate-400"></i>
-                </div>
-            `).join('');
-
-            document.getElementById('productPickerModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('productPickerModal').classList.remove('opacity-0'), 10);
-        }
-
-        function closeProductPickerModal() {
-            document.getElementById('productPickerModal').classList.add('opacity-0');
-            setTimeout(() => document.getElementById('productPickerModal').classList.add('hidden'), 200);
-        }
-
-        function confirmProductSelection(prodId) {
-            currentActiveProofProdId = prodId;
-            const p = products.find(item => item.id === prodId);
-            if (p) {
-                document.getElementById('selectedProductTitle').textContent = p.title;
-                document.getElementById('selectedProductId').value = p.id;
-            }
-            closeProductPickerModal();
-            openProofModal();
-        }
-
-        function selectProductForProof(prodId) {
-            confirmProductSelection(prodId);
-        }
-
-        function openProofModal() {
-            if (!currentUser) return openAuthModal();
-            document.getElementById('proofModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('proofModal').classList.remove('opacity-0'), 10);
-        }
-
-        function closeProofModal() {
-            document.getElementById('proofModal').classList.add('opacity-0');
-            setTimeout(() => document.getElementById('proofModal').classList.add('hidden'), 200);
-        }
-
-        function previewProofUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const isVideo = file.type.startsWith('video/');
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                tempProofMedia = { type: isVideo ? 'video' : 'image', url: evt.target.result };
-                const container = document.getElementById('proofPreviewContainer');
-                const img = document.getElementById('proofPreviewImg');
-                const vid = document.getElementById('proofPreviewVid');
-                container.classList.remove('hidden');
-                if (isVideo) {
-                    img.classList.add('hidden');
-                    vid.classList.remove('hidden');
-                    vid.src = evt.target.result;
-                } else {
-                    vid.classList.add('hidden');
-                    img.classList.remove('hidden');
-                    img.src = evt.target.result;
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function submitOrderProof(e) {
+        window.handleAuthSubmit = async function(e) {
             e.preventDefault();
-            if (!currentUser) return openAuthModal();
-            if (currentUser.isBlocked) return alert('🚫 Tài khoản của bạn đã bị khóa tính năng do gian lận/spam.');
+            const mode = e.target.dataset.mode || 'login';
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            const name = document.getElementById('authName').value.trim();
 
-            const orderId = document.getElementById('proofOrderId').value.trim();
-            const note = document.getElementById('proofNote').value.trim();
-            const prodId = document.getElementById('selectedProductId').value;
-
-            if (orderId.length < 5) return alert('Mã đơn hàng phải từ 5 ký tự trở lên!');
-            if (orderProofs.some(p => p.orderId === orderId)) return alert('Mã đơn hàng này đã được gửi xét duyệt trước đó!');
-
-            const p = products.find(item => item.id === prodId);
-            const rewardPoints = p ? p.rewardPoints : 5000;
-
-            const newProof = {
-                id: 'proof_' + Date.now(),
-                userId: currentUser.id,
-                userCode: currentUser.secretCode,
-                userName: currentUser.name,
-                orderId,
-                productId: prodId,
-                productTitle: p ? p.title : 'Sản phẩm',
-                rewardPoints,
-                media: tempProofMedia,
-                note,
-                status: 'pending', // 'pending', 'approved', 'rejected'
-                createdAt: new Date().toISOString()
-            };
-
-            orderProofs.push(newProof);
-            currentUser.logs = currentUser.logs || [];
-            currentUser.logs.unshift(`Gửi mã đơn #${orderId} tích điểm.`);
-            syncLocalStorage();
-
-            alert('✅ Đã gửi bằng chứng mua hàng thành công! Admin sẽ đối soát và duyệt điểm cho bạn.');
-            closeProofModal();
-        }
-
-        function openWalletModal(tab = 'bank') {
-            if (!currentUser) return openAuthModal();
-            document.getElementById('modalUserPoints').textContent = currentUser.points.toLocaleString();
-            document.getElementById('modalUserVnd').textContent = currentUser.points.toLocaleString();
-            document.getElementById('walletModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('walletModal').classList.remove('opacity-0'), 10);
-            
-            if (currentUser.bankInfo) {
-                document.getElementById('bankName').value = currentUser.bankInfo.bankName || '';
-                document.getElementById('bankAccount').value = currentUser.bankInfo.bankAccount || '';
-                document.getElementById('bankHolder').value = currentUser.bankInfo.bankHolder || '';
-                if (currentUser.bankInfo.qrUrl) {
-                    document.getElementById('qrPreviewContainer').classList.remove('hidden');
-                    document.getElementById('qrPreviewImg').src = currentUser.bankInfo.qrUrl;
+            try {
+                if (mode === 'register') {
+                    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                    await updateProfile(userCred.user, { displayName: name || 'Mẹ Bỉm' });
+                    showToast('Đăng ký tài khoản thành công! Tặng +1.000đ điểm thưởng.', 'success');
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    showToast('Đăng nhập thành công!', 'success');
                 }
+                closeAuthModal();
+            } catch (err) {
+                showToast('Lỗi: ' + err.message, 'error');
             }
-            switchWalletTab(tab);
-        }
+        };
 
-        function closeWalletModal() {
-            document.getElementById('walletModal').classList.add('opacity-0');
-            setTimeout(() => document.getElementById('walletModal').classList.add('hidden'), 200);
-        }
+        window.handleLogout = async function() {
+            await signOut(auth);
+            showToast('Đã đăng xuất tài khoản.', 'info');
+            closeWalletModal();
+            closeModal('profileModal');
+        };
 
-        function switchWalletTab(tab) {
+        window.claimDailyAttendance = async function() {
+            if (!currentUser) return openAuthModal('login');
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (userData.lastCheckin === todayStr) {
+                showToast('Mẹ bỉm đã điểm danh hôm nay rồi! Hãy quay lại vào ngày mai nhé.', 'info');
+                return;
+            }
+
+            const newPoints = (userData.points || 0) + 20;
+            await updateDoc(doc(db, "users", currentUser.uid), {
+                points: newPoints,
+                lastCheckin: todayStr
+            });
+
+            // Log transaction
+            addDoc(collection(db, "transactions"), {
+                userId: currentUser.uid,
+                amount: 20,
+                type: 'checkin',
+                desc: 'Điểm danh hằng ngày (+20 điểm)',
+                timestamp: serverTimestamp()
+            });
+
+            showToast('🎉 điểm danh thành công! +20 điểm thưởng', 'success');
+        };
+
+        window.openWalletModal = function(tab) {
+            if (!currentUser) return openAuthModal('login');
+            if (tab) switchWalletTab(tab === 'withdraw' ? 'withdraw' : 'bank');
+            openModal('walletModal');
+        };
+
+        window.closeWalletModal = function() {
+            closeModal('walletModal');
+        };
+
+        window.switchWalletTab = function(tab) {
             const isBank = tab === 'bank';
             document.getElementById('sectionBank').classList.toggle('hidden', !isBank);
             document.getElementById('sectionWithdraw').classList.toggle('hidden', isBank);
+            
             document.getElementById('tabBankBtn').className = isBank ? 'flex-1 py-2 text-xs font-bold rounded-xl bg-slate-900 text-white shadow-sm' : 'flex-1 py-2 text-xs font-bold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300';
             document.getElementById('tabWithdrawBtn').className = !isBank ? 'flex-1 py-2 text-xs font-bold rounded-xl bg-slate-900 text-white shadow-sm' : 'flex-1 py-2 text-xs font-bold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300';
-        }
+        };
 
-        function previewQrUpload(e) {
+        window.previewQrUpload = function(e) {
             const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                tempQrMedia = evt.target.result;
-                document.getElementById('qrPreviewContainer').classList.remove('hidden');
-                document.getElementById('qrPreviewImg').src = tempQrMedia;
-            };
-            reader.readAsDataURL(file);
-        }
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    document.getElementById('qrPreviewContainer').classList.remove('hidden');
+                    document.getElementById('qrPreviewImg').src = evt.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        };
 
-        function saveBankInfo(e) {
+        window.saveBankInfo = async function(e) {
             e.preventDefault();
             if (!currentUser) return;
+
             const bankName = document.getElementById('bankName').value.trim();
             const bankAccount = document.getElementById('bankAccount').value.trim();
-            const bankHolder = document.getElementById('bankHolder').value.trim().toUpperCase();
+            const bankHolder = document.getElementById('bankHolder').value.trim();
+            const qrImg = document.getElementById('qrPreviewImg').src;
 
-            currentUser.bankInfo = {
-                bankName,
-                bankAccount,
-                bankHolder,
-                qrUrl: tempQrMedia || (currentUser.bankInfo ? currentUser.bankInfo.qrUrl : '')
-            };
+            await updateDoc(doc(db, "users", currentUser.uid), {
+                bank: { bankName, bankAccount, bankHolder, qrUrl: qrImg }
+            });
 
-            const uIdx = users.findIndex(u => u.id === currentUser.id);
-            if (uIdx !== -1) users[uIdx] = currentUser;
+            showToast('Đã lưu thông tin tài khoản ngân hàng & Mã QR!', 'success');
+        };
 
-            syncLocalStorage();
-            alert('✅ Đã lưu thông tin ngân hàng và mã QR thành công!');
-        }
-
-        function submitWithdrawalRequestCustom(e) {
+        window.submitWithdrawalRequestCustom = async function(e) {
             e.preventDefault();
-            if (!currentUser) return openAuthModal();
-            if (!currentUser.bankInfo || !currentUser.bankInfo.bankAccount) {
-                alert('Vui lòng cập nhật STK Ngân Hàng trước khi rút tiền!');
-                return switchWalletTab('bank');
-            }
+            if (!currentUser) return openAuthModal('login');
 
             const amount = parseInt(document.getElementById('withdrawAmountInput').value);
-            if (isNaN(amount) || amount < 10000) return alert('Số tiền rút tối thiểu là 10.000 VNĐ!');
-            if (amount > currentUser.points) return alert('Số dư điểm không đủ!');
+            if (amount < 10000) {
+                showToast('Số tiền rút tối thiểu là 10.000đ!', 'error');
+                return;
+            }
 
-            currentUser.points -= amount;
-            const newW = {
-                id: 'w_' + Date.now(),
-                userId: currentUser.id,
-                userCode: currentUser.secretCode,
-                userName: currentUser.name,
-                amount,
-                bankInfo: currentUser.bankInfo,
+            if ((userData.points || 0) < amount) {
+                showToast('Số dư điểm của bạn không đủ để thực hiện rút số tiền này!', 'error');
+                return;
+            }
+
+            if (!userData.bank || !userData.bank.bankAccount) {
+                showToast('Vui lòng lưu thông tin Ngân Hàng trước khi rút tiền!', 'error');
+                switchWalletTab('bank');
+                return;
+            }
+
+            // Deduct points & create pending withdrawal request
+            const newPoints = userData.points - amount;
+            await updateDoc(doc(db, "users", currentUser.uid), { points: newPoints });
+
+            await addDoc(collection(db, "withdrawals"), {
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                userName: currentUser.displayName || 'Mẹ Bỉm',
+                amount: amount,
+                bank: userData.bank,
                 status: 'pending',
-                createdAt: new Date().toISOString()
-            };
-
-            withdrawals.push(newW);
-            currentUser.logs = currentUser.logs || [];
-            currentUser.logs.unshift(`Tạo lệnh rút ${amount.toLocaleString()}đ về ATM.`);
-            
-            syncLocalStorage();
-            updateUserUI();
-            alert('🎉 Đã gửi yêu cầu rút tiền! Admin sẽ duyệt và chuyển khoản thẳng về ATM cho bạn.');
-            closeWalletModal();
-        }
-
-        function claimDailyAttendance() {
-            if (!currentUser) return openAuthModal();
-            const today = new Date().toDateString();
-            if (currentUser.lastAttendance === today) {
-                return alert('Mẹ bỉm đã điểm danh hôm nay rồi! Hãy quay lại vào ngày mai nhé.');
-            }
-            currentUser.lastAttendance = today;
-            currentUser.points += 20;
-            currentUser.logs = currentUser.logs || [];
-            currentUser.logs.unshift('Điểm danh hàng ngày nhận +20 điểm.');
-            syncLocalStorage();
-            updateUserUI();
-            alert('🎉 Điểm danh thành công! Nhận ngay +20 điểm thưởng.');
-        }
-
-        function openAdminModal() {
-            if (!currentUser || !currentUser.isAdmin) return alert('Chỉ có tài khoản Admin mới có quyền truy cập!');
-            document.getElementById('adminModal').classList.remove('hidden');
-        }
-
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.add('hidden');
-        }
-
-        function verifyAdminPin() {
-            const pin = document.getElementById('adminPinInput').value;
-            if (pin === '123456') {
-                document.getElementById('adminPinSection').classList.add('hidden');
-                document.getElementById('adminDashboard').classList.remove('hidden');
-                loadAdminUsers();
-                loadAdminProducts();
-                loadAdminOrders();
-                loadAdminWithdrawals();
-            } else {
-                alert('Mã PIN Admin không đúng!');
-            }
-        }
-
-        function switchAdminTab(tab) {
-            ['users', 'product', 'order', 'withdraw', 'ai'].forEach(t => {
-                const sec = document.getElementById('admSec' + t.charAt(0).toUpperCase() + t.slice(1));
-                const btn = document.getElementById('admTab' + t.charAt(0).toUpperCase() + t.slice(1));
-                if (sec && btn) {
-                    sec.classList.toggle('hidden', t !== tab);
-                    btn.className = (t === tab) ? 'py-2.5 px-4 text-xs font-black border-b-2 border-slate-900 dark:border-rose-500 text-slate-900 dark:text-rose-400 whitespace-nowrap' : 'py-2.5 px-4 text-xs font-bold border-b-2 border-transparent text-slate-500 whitespace-nowrap';
-                }
+                timestamp: serverTimestamp()
             });
-        }
 
-        /* Admin Tab 1: User Management & Anti-Spam & Activity Inspector */
-        function loadAdminUsers() {
-            const tbody = document.getElementById('adminUserTableBody');
-            tbody.innerHTML = users.map(u => `
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td class="p-3">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-slate-800 text-white flex items-center justify-center font-bold text-xs">
-                                ${u.name.charAt(0)}
-                            </div>
-                            <div>
-                                <p class="font-extrabold text-slate-800 dark:text-white">${u.name} ${u.isBlocked ? '<span class="text-rose-500">(Đã Chặn Spam)</span>' : ''}</p>
-                                <p class="text-[10px] font-mono text-slate-400">${u.email} • ${u.secretCode}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="p-3 font-extrabold text-rose-600">${u.points.toLocaleString()}đ</td>
-                    <td class="p-3">
-                        ${u.bankInfo ? `${u.bankInfo.bankName} - ${u.bankInfo.bankAccount}` : '<span class="text-slate-400 italic">Chưa có</span>'}
-                    </td>
-                    <td class="p-3 text-center space-x-1">
-                        <button onclick="viewUserActivity('${u.id}')" class="bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg text-[10px] font-bold">
-                            🔍 Lịch Sử
-                        </button>
-                        <button onclick="toggleBlockUser('${u.id}')" class="${u.isBlocked ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} px-2 py-1 rounded-lg text-[10px] font-bold">
-                            ${u.isBlocked ? '🔓 Bỏ Chặn' : '🚫 Chặn Spam'}
-                        </button>
-                    </td>
-                </tr>
+            await addDoc(collection(db, "transactions"), {
+                userId: currentUser.uid,
+                amount: -amount,
+                type: 'withdraw',
+                desc: `Yêu cầu rút ${amount.toLocaleString('vi-VN')} VNĐ về ngân hàng`,
+                timestamp: serverTimestamp()
+            });
+
+            showToast('Đã gửi yêu cầu rút tiền! Admin sẽ duyệt và chuyển khoản sớm.', 'success');
+            closeWalletModal();
+        };
+
+        window.openProductSelectorForProof = function() {
+            if (!currentUser) return openAuthModal('login');
+            openProofModal();
+        };
+
+        window.selectProductForProofDirect = function(id, title) {
+            if (!currentUser) return openAuthModal('login');
+            document.getElementById('selectedProductId').value = id;
+            document.getElementById('selectedProductTitle').innerHTML = `<span class="font-bold text-slate-800 dark:text-white">${escapeHtml(title)}</span>`;
+            openProofModal();
+        };
+
+        window.openProofModal = function() {
+            openModal('proofModal');
+        };
+
+        window.closeProofModal = function() {
+            closeModal('proofModal');
+        };
+
+        window.openProductSelectorModal = function() {
+            const listEl = document.getElementById('productPickerList');
+            listEl.innerHTML = products.map(p => `
+                <div onclick="pickProductForProof('${p.id}', '${escapeHtml(p.title)}')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-slate-800 cursor-pointer flex items-center gap-3">
+                    <img src="${p.img}" class="w-10 h-10 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <p class="font-bold text-xs text-slate-800 dark:text-white line-clamp-1">${escapeHtml(p.title)}</p>
+                        <p class="text-[10px] text-rose-500 font-bold">${p.price.toLocaleString('vi-VN')}đ • Thưởng ${p.rewardPercent}%</p>
+                    </div>
+                </div>
             `).join('');
-        }
+            openModal('productPickerModal');
+        };
 
-        function toggleBlockUser(userId) {
-            const u = users.find(item => item.id === userId);
-            if (u) {
-                u.isBlocked = !u.isBlocked;
-                syncLocalStorage();
-                loadAdminUsers();
-                alert(`Đã ${u.isBlocked ? 'khóa/chặn' : 'mở khóa'} thành viên ${u.name}!`);
+        window.closeProductPickerModal = function() {
+            closeModal('productPickerModal');
+        };
+
+        window.pickProductForProof = function(id, title) {
+            document.getElementById('selectedProductId').value = id;
+            document.getElementById('selectedProductTitle').innerHTML = `<span class="font-bold text-slate-800 dark:text-white">${title}</span>`;
+            closeProductPickerModal();
+        };
+
+        window.previewProofUpload = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    document.getElementById('proofPreviewContainer').classList.remove('hidden');
+                    if (file.type.startsWith('video/')) {
+                        document.getElementById('proofPreviewImg').classList.add('hidden');
+                        document.getElementById('proofPreviewVid').classList.remove('hidden');
+                        document.getElementById('proofPreviewVid').src = evt.target.result;
+                    } else {
+                        document.getElementById('proofPreviewVid').classList.add('hidden');
+                        document.getElementById('proofPreviewImg').classList.remove('hidden');
+                        document.getElementById('proofPreviewImg').src = evt.target.result;
+                    }
+                }
+                reader.readAsDataURL(file);
             }
-        }
+        };
 
-        function viewUserActivity(userId) {
-            const u = users.find(item => item.id === userId);
-            if (!u) return;
+        window.submitOrderProof = async function(e) {
+            e.preventDefault();
+            if (!currentUser) return openAuthModal('login');
 
-            document.getElementById('activityUserTitle').textContent = `Lịch Sử Hoạt Động: ${u.name} (${u.secretCode})`;
-            const container = document.getElementById('activityContent');
+            const prodId = document.getElementById('selectedProductId').value;
+            const orderId = document.getElementById('proofOrderId').value.trim();
+            const note = document.getElementById('proofNote').value.trim();
+            const imgUrl = document.getElementById('proofPreviewImg').src || document.getElementById('proofPreviewVid').src;
 
-            const uProofs = orderProofs.filter(p => p.userId === userId);
-            const uWithdraws = withdrawals.filter(w => w.userId === userId);
+            if (!prodId) {
+                showToast('Vui lòng chọn món đồ đã mua!', 'error');
+                return;
+            }
 
-            container.innerHTML = `
-                <div class="grid grid-cols-2 gap-2 text-[11px] mb-3">
-                    <div class="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl">
-                        <p class="text-slate-400">Email:</p>
-                        <p class="font-bold font-mono">${isPrivacyMasked ? u.email.replace(/(.{2})(.*)(?=@)/, '$1***') : u.email}</p>
-                    </div>
-                    <div class="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl">
-                        <p class="text-slate-400">Số Dư Hiện Tại:</p>
-                        <p class="font-bold text-rose-600">${u.points.toLocaleString()}đ</p>
-                    </div>
-                </div>
+            const targetProd = products.find(p => p.id === prodId);
+            const rewardPoints = Math.round((targetProd.price * targetProd.rewardPercent) / 100);
 
-                <div>
-                    <h5 class="font-extrabold mb-1">📜 Nhật Ký Điểm & Thao Tác:</h5>
-                    <ul class="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-300">
-                        ${(u.logs || ['Chưa có lịch sử']).map(l => `<li>${l}</li>`).join('')}
-                    </ul>
-                </div>
+            await addDoc(collection(db, "proofs"), {
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                userName: currentUser.displayName || 'Mẹ Bỉm',
+                productId: prodId,
+                productTitle: targetProd.title,
+                rewardPoints: rewardPoints,
+                orderId: orderId,
+                proofImg: imgUrl,
+                note: note,
+                status: 'pending',
+                timestamp: serverTimestamp()
+            });
 
-                <div>
-                    <h5 class="font-extrabold mb-1">📦 Đơn Tích Điểm Đã Gửi (${uProofs.length}):</h5>
-                    <div class="space-y-1">
-                        ${uProofs.map(p => `
-                            <div class="bg-slate-50 dark:bg-slate-800 p-2 rounded-xl flex justify-between items-center text-[11px]">
-                                <span>Mã: <strong>${p.orderId}</strong> (${p.productTitle})</span>
-                                <span class="font-bold ${p.status === 'approved' ? 'text-emerald-500' : p.status === 'rejected' ? 'text-rose-500' : 'text-amber-500'}">${p.status}</span>
-                            </div>
-                        `).join('')}
+            showToast('Gửi hóa đơn thành công! Đang chờ Admin xét duyệt.', 'success');
+            closeProofModal();
+        };
+
+        window.openDetailModal = function(prodId) {
+            const p = products.find(x => x.id === prodId);
+            if (!p) return;
+
+            const rewardPoints = Math.round((p.price * p.rewardPercent) / 100);
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+                    <img src="${p.img}" class="w-full h-64 object-cover rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <div class="space-y-3 text-xs">
+                        <span class="bg-rose-100 text-rose-700 font-extrabold px-2.5 py-1 rounded-lg uppercase text-[10px]">Thưởng ${p.rewardPercent}% Hoàn Điểm</span>
+                        <h3 class="font-black text-base text-slate-900 dark:text-white leading-tight">${escapeHtml(p.title)}</h3>
+                        <p class="text-slate-500 leading-relaxed">${escapeHtml(p.desc || 'Chưa có mô tả chi tiết.')}</p>
+                        
+                        <div class="flex items-baseline gap-2 pt-2">
+                            <span class="text-xl font-black text-rose-600">${p.price.toLocaleString('vi-VN')}đ</span>
+                            ${p.originalPrice ? `<span class="text-xs text-slate-400 line-through">${p.originalPrice.toLocaleString('vi-VN')}đ</span>` : ''}
+                        </div>
+
+                        <div class="bg-amber-50 dark:bg-amber-950/40 p-3 rounded-xl border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-300 font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-coins text-amber-500 text-base"></i>
+                            <span>Tích ngay +${rewardPoints.toLocaleString('vi-VN')} điểm (~${rewardPoints.toLocaleString('vi-VN')}đ ATM)</span>
+                        </div>
+
+                        <div class="flex gap-2 pt-2">
+                            <a href="${p.affLink}" target="_blank" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-xl text-center shadow-md">
+                                Sắm Ngay Chi Tiết
+                            </a>
+                            <button onclick="selectProductForProofDirect('${p.id}', '${escapeHtml(p.title)}')" class="bg-slate-900 dark:bg-slate-800 text-white font-extrabold px-4 rounded-xl">
+                                Gửi Đơn
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
 
-            document.getElementById('userActivityModal').classList.remove('hidden');
-        }
-
-        function closeActivityModal() {
-            document.getElementById('userActivityModal').classList.add('hidden');
-        }
-
-        function togglePrivacyMask() {
-            isPrivacyMasked = !isPrivacyMasked;
-            const btn = document.getElementById('privacyToggleBtn');
-            btn.innerHTML = isPrivacyMasked ? `<i class="fa-solid fa-eye-slash"></i> <span>Mở Khóa Dữ Liệu Bảo Mật</span>` : `<i class="fa-solid fa-eye"></i> <span>Ẩn Dữ Liệu Bảo Mật</span>`;
-            alert(`Chế độ bảo mật thông tin: ${isPrivacyMasked ? 'ĐÁNH DẤU SAO (*)' : 'HIỂN THỊ ĐẦY ĐỦ'}`);
-        }
-
-        /* Admin Tab 2: Product & Multi-media Upload & Delete Product */
-        function handleAdminMediaUpload(e) {
-            const files = Array.from(e.target.files);
-            if (!files.length) return;
-
-            tempAdminMedia = [];
-            const grid = document.getElementById('admMediaPreviewGrid');
-            grid.innerHTML = '';
-
-            files.forEach(file => {
-                const isVid = file.type.startsWith('video/');
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    const mediaObj = { type: isVid ? 'video' : 'image', url: evt.target.result };
-                    tempAdminMedia.push(mediaObj);
-
-                    const div = document.createElement('div');
-                    div.className = 'relative w-16 h-16 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700';
-                    if (isVid) {
-                        div.innerHTML = `<video src="${evt.target.result}" class="w-full h-full object-cover"></video><span class="absolute bottom-0 right-0 bg-black text-white text-[9px] px-1">VID</span>`;
-                    } else {
-                        div.innerHTML = `<img src="${evt.target.result}" class="w-full h-full object-cover">`;
-                    }
-                    grid.appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function handleAdminSaveProduct(e) {
-            e.preventDefault();
-            const title = document.getElementById('admPTitle').value.trim();
-            const price = parseInt(document.getElementById('admPPrice').value);
-            const rewardPoints = parseInt(document.getElementById('admPReward').value);
-            const category = document.getElementById('admPCategory').value;
-            const ageStage = document.getElementById('admPAgeStage').value;
-            const shopeeUrl = document.getElementById('admPShopee').value;
-            const lazadaUrl = document.getElementById('admPLazada').value;
-            const tiktokUrl = document.getElementById('admPTiktok').value;
-            const desc = document.getElementById('admPDesc').value.trim();
-
-            if (!tempAdminMedia.length) {
-                return alert('Vui lòng tải lên ít nhất 1 ảnh hoặc video sản phẩm!');
-            }
-
-            const newP = {
-                id: 'prod_' + Date.now(),
-                title,
-                price,
-                rewardPoints,
-                category,
-                ageStage,
-                rating: 5.0,
-                media: tempAdminMedia,
-                shopeeUrl,
-                lazadaUrl,
-                tiktokUrl,
-                desc
-            };
-
-            products.unshift(newP);
-            syncLocalStorage();
-            renderProducts();
-            loadAdminProducts();
-            alert('🎉 Đã đăng sản phẩm mới thành công!');
-        }
-
-        function loadAdminProducts() {
-            const list = document.getElementById('adminProductList');
-            list.innerHTML = products.map(p => `
-                <div class="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-2">
-                        <img src="${p.media && p.media[0] ? p.media[0].url : ''}" class="w-10 h-10 object-cover rounded-lg">
-                        <div>
-                            <p class="font-extrabold line-clamp-1">${p.title}</p>
-                            <p class="text-[10px] text-slate-400">${p.price.toLocaleString()}đ • +${p.rewardPoints.toLocaleString()} điểm</p>
+            // Sync Comments
+            const commRef = ref(rtdb, `comments/${prodId}`);
+            onValue(commRef, (snapshot) => {
+                const data = snapshot.val();
+                const listEl = document.getElementById('commentList');
+                if (!data) {
+                    listEl.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-2">Chưa có bình luận nào. Hãy là người đầu tiên!</p>';
+                    return;
+                }
+                const comments = Object.values(data).reverse();
+                listEl.innerHTML = comments.map(c => `
+                    <div class="bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                        <div class="flex justify-between items-center mb-0.5">
+                            <span class="font-bold text-rose-600 dark:text-rose-400">${escapeHtml(c.author)}</span>
+                            <span class="text-[10px] text-slate-400">${c.time}</span>
                         </div>
+                        <p class="text-slate-700 dark:text-slate-200">${escapeHtml(c.text)}</p>
                     </div>
-                    <button onclick="deleteProduct('${p.id}')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded-lg text-[10px]">
-                        🗑️ Xóa Sản Phẩm
-                    </button>
-                </div>
-            `).join('');
-        }
+                `).join('');
+            });
 
-        function deleteProduct(id) {
-            if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi cửa hàng?')) return;
-            products = products.filter(p => p.id !== id);
-            syncLocalStorage();
-            renderProducts();
-            loadAdminProducts();
-            alert('Đã xóa sản phẩm.');
-        }
+            document.getElementById('commentForm').dataset.prodid = prodId;
+            openModal('detailModal');
+        };
 
-        /* Admin Tab 3: Order Proof Approvals */
-        function loadAdminOrders() {
-            const tbody = document.getElementById('adminOrderTableBody');
-            const pendings = orderProofs.filter(p => p.status === 'pending');
+        window.closeDetailModal = function() {
+            closeModal('detailModal');
+        };
 
-            if (pendings.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 italic text-slate-400">Không có đơn hàng nào chờ duyệt.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = pendings.map(p => `
-                <tr>
-                    <td class="p-3">
-                        <p class="font-mono font-bold">${p.orderId}</p>
-                        <p class="text-[10px] text-slate-400">${p.productTitle}</p>
-                    </td>
-                    <td class="p-3 font-bold">${p.userName} (${p.userCode})</td>
-                    <td class="p-3">
-                        ${p.media ? `
-                            <button onclick="openLightbox('${p.media.url}')" class="text-rose-600 font-bold underline">
-                                🖼️ Xem Bằng Chứng
-                            </button>
-                        ` : '<span class="text-slate-400">Không có</span>'}
-                    </td>
-                    <td class="p-3 font-extrabold text-emerald-600">+${p.rewardPoints.toLocaleString()}đ</td>
-                    <td class="p-3 text-center space-x-1">
-                        <button onclick="approveProof('${p.id}')" class="bg-emerald-600 text-white font-bold px-2.5 py-1 rounded-lg text-[10px]">
-                            ✅ Duyệt Tích Điểm
-                        </button>
-                        <button onclick="rejectProof('${p.id}')" class="bg-rose-600 text-white font-bold px-2.5 py-1 rounded-lg text-[10px]">
-                            ❌ Từ Chối
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function approveProof(proofId) {
-            const proof = orderProofs.find(p => p.id === proofId);
-            if (!proof) return;
-
-            proof.status = 'approved';
-            const targetUser = users.find(u => u.id === proof.userId);
-            if (targetUser) {
-                targetUser.points += proof.rewardPoints;
-                targetUser.logs = targetUser.logs || [];
-                targetUser.logs.unshift(`Đã duyệt đơn #${proof.orderId} nhận +${proof.rewardPoints} điểm.`);
-            }
-
-            syncLocalStorage();
-            loadAdminOrders();
-            updateUserUI();
-            alert(`✅ Đã duyệt cộng +${proof.rewardPoints} điểm cho tài khoản ${proof.userName}!`);
-        }
-
-        function rejectProof(proofId) {
-            const proof = orderProofs.find(p => p.id === proofId);
-            if (!proof) return;
-            proof.status = 'rejected';
-            syncLocalStorage();
-            loadAdminOrders();
-            alert('Đã từ chối đơn hàng.');
-        }
-
-        /* Admin Tab 4: Withdrawals Approvals */
-        function loadAdminWithdrawals() {
-            const tbody = document.getElementById('adminWithdrawTableBody');
-            const pendings = withdrawals.filter(w => w.status === 'pending');
-
-            if (pendings.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 italic text-slate-400">Không có lệnh rút tiền nào chờ xử lý.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = pendings.map(w => `
-                <tr>
-                    <td class="p-3 font-mono font-bold">${w.id}</td>
-                    <td class="p-3 font-bold">${w.userName} (${w.userCode})</td>
-                    <td class="p-3 font-black text-rose-600">${w.amount.toLocaleString()} VNĐ</td>
-                    <td class="p-3">
-                        <p class="font-bold">${w.bankInfo.bankName} - ${w.bankInfo.bankAccount}</p>
-                        <p class="text-[10px] uppercase text-slate-500">${w.bankInfo.bankHolder}</p>
-                        ${w.bankInfo.qrUrl ? `<button onclick="openLightbox('${w.bankInfo.qrUrl}')" class="text-xs text-indigo-600 underline font-bold">Quét Mã QR ATM</button>` : ''}
-                    </td>
-                    <td class="p-3 text-center">
-                        <button onclick="approveWithdrawal('${w.id}')" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-[10px]">
-                            💸 Xác Nhận Đã Chuyển Tiền
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function approveWithdrawal(id) {
-            const w = withdrawals.find(item => item.id === id);
-            if (!w) return;
-            w.status = 'approved';
-            syncLocalStorage();
-            loadAdminWithdrawals();
-            alert('✅ Đã xác nhận chuyển tiền thành công cho tài khoản mẹ bỉm!');
-        }
-
-        function saveAdminApiKey() {
-            const key = document.getElementById('adminGeminiApiKey').value.trim();
-            adminApiKey = key;
-            localStorage.setItem('mb_gemini_key', key);
-            alert('✅ Đã lưu Gemini API Key bảo mật thành công!');
-        }
-
-        function setAiPrompt(text) {
-            document.getElementById('adminAiInput').value = text;
-        }
-
-        async function sendAdminGeminiChat() {
-            const apiKey = document.getElementById('adminGeminiApiKey').value.trim() || adminApiKey;
-            const model = document.getElementById('adminGeminiModelSelect').value || 'gemini-3.1-flash-preview';
-            const inputEl = document.getElementById('adminAiInput');
-            const userMsg = inputEl.value.trim();
-            if (!userMsg) return;
-
-            const chatContainer = document.getElementById('adminAiChatContainer');
-
-            // Append User Message
-            const userBox = document.createElement('div');
-            userBox.className = 'bg-slate-900 text-white p-3 rounded-2xl max-w-lg ml-auto text-xs';
-            userBox.textContent = userMsg;
-            chatContainer.appendChild(userBox);
-
-            inputEl.value = '';
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            // Append AI Loading Box
-            const aiBox = document.createElement('div');
-            aiBox.className = 'bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-200 p-3 rounded-2xl max-w-lg text-xs leading-relaxed space-y-1';
-            aiBox.innerHTML = '<p class="font-bold">⏳ AI Gemini đang suy nghĩ phản hồi...</p>';
-            chatContainer.appendChild(aiBox);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            try {
-                const systemPrompt = "Bạn là trợ lý AI cao cấp chuyên biệt dành riêng cho Trị Sự Admin của nền tảng 'Góc Mẹ Bỉm - Review & Tích Điểm'. Hãy trả lời súc tích, chuyên nghiệp, thông minh bằng tiếng Việt, hỗ trợ đắc lực các chiến lược marketing, nội dung review và vận hành web.";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-                const payload = {
-                    contents: [{ parts: [{ text: userMsg }] }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] }
-                };
-
-                const res = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!res.ok) throw new Error(`Lỗi HTTP status ${res.status}`);
-
-                const data = await res.json();
-                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Không nhận được phản hồi từ model AI.";
-
-                aiBox.innerHTML = `<p class="font-bold text-purple-600 dark:text-purple-300">🤖 Trợ Lý Gemini AI (${model}):</p><div class="whitespace-pre-line">${aiText}</div>`;
-            } catch (err) {
-                aiBox.innerHTML = `<p class="font-bold text-rose-600">❌ Lỗi kết nối Gemini AI:</p><p>${err.message}. Vui lòng kiểm tra lại API Key hoặc đổi model khác.</p>`;
-            }
-
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function renderProductComments(prodId) {
-            const list = document.getElementById('commentList');
-            const comments = productComments[prodId] || [];
-            if (comments.length === 0) {
-                list.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-2">Chưa có bình luận nào. Hãy là người đầu tiên để lại ý kiến!</p>`;
-                return;
-            }
-            list.innerHTML = comments.map(c => `
-                <div class="bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 text-xs">
-                    <div class="flex justify-between font-bold text-slate-700 dark:text-slate-200">
-                        <span>${c.userName}</span>
-                        <span class="text-[10px] text-slate-400 font-normal">${new Date(c.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                    </div>
-                    <p class="text-slate-600 dark:text-slate-300 mt-1">${c.text}</p>
-                </div>
-            `).join('');
-        }
-
-        function submitComment(e) {
+        window.submitComment = async function(e) {
             e.preventDefault();
-            if (!currentUser) return openAuthModal();
-            const input = document.getElementById('commentInput');
-            const text = input.value.trim();
+            if (!currentUser) return openAuthModal('login');
+
+            const prodId = e.target.dataset.prodid;
+            const text = document.getElementById('commentInput').value.trim();
             if (!text) return;
 
-            const pId = document.getElementById('selectedProductId')?.value || products[0].id;
-            productComments[pId] = productComments[pId] || [];
-            productComments[pId].push({
-                userName: currentUser.name,
-                text,
-                time: new Date().toISOString()
+            const commRef = ref(rtdb, `comments/${prodId}`);
+            await push(commRef, {
+                author: currentUser.displayName || 'Mẹ Bỉm',
+                text: text,
+                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
             });
 
-            syncLocalStorage();
-            input.value = '';
-            renderProductComments(pId);
-        }
+            document.getElementById('commentInput').value = '';
+        };
 
-        function toggleWishlist(e, pId) {
-            e.stopPropagation();
-            const idx = wishlists.indexOf(pId);
-            if (idx === -1) wishlists.push(pId);
-            else wishlists.splice(idx, 1);
-            syncLocalStorage();
-            renderProducts();
-        }
+        window.openAdminModal = function() {
+            openModal('adminModal');
+        };
 
-        function openLightbox(url) {
-            const modal = document.getElementById('lightboxModal');
-            const img = document.getElementById('lightboxImg');
-            img.src = url;
-            img.classList.remove('hidden');
-            modal.classList.remove('hidden');
-        }
+        window.closeAdminModal = function() {
+            closeModal('adminModal');
+        };
 
-        function closeLightbox() {
-            document.getElementById('lightboxModal').classList.add('hidden');
-        }
-
-        function toggleTheme() {
-            document.documentElement.classList.toggle('dark');
-        }
-
-        function copySecretCode() {
-            if (!currentUser) return alert('Vui lòng đăng nhập để xem mã định danh ẩn.');
-            navigator.clipboard.writeText(currentUser.secretCode);
-            alert(`Đã sao chép mã định danh: ${currentUser.secretCode}`);
-        }
-
-        /* Auxiliary Modals Handlers */
-        function openLeaderboardModal() {
-            const body = document.getElementById('auxModalBody');
-            document.getElementById('auxModalTitle').innerHTML = `<i class="fa-solid fa-trophy text-amber-500"></i> Bảng Xếp Hạng Mẹ Bỉm Tích Điểm Khủng`;
-            
-            const sorted = [...users].sort((a,b) => b.points - a.points).slice(0, 5);
-            body.innerHTML = `
-                <div class="space-y-2">
-                    ${sorted.map((u, i) => `
-                        <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-3">
-                                <span class="w-6 h-6 rounded-full font-black flex items-center justify-center ${i===0?'bg-amber-400 text-white':i===1?'bg-slate-300 text-slate-800':'bg-amber-700 text-white'}">${i+1}</span>
-                                <div>
-                                    <p class="font-extrabold text-slate-800 dark:text-white">${u.name}</p>
-                                    <p class="text-[10px] text-slate-400">${u.secretCode}</p>
-                                </div>
-                            </div>
-                            <span class="font-black text-rose-600">${u.points.toLocaleString()} điểm</span>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            document.getElementById('auxModal').classList.remove('hidden');
-        }
-
-        function openTransactionLogModal() {
-            if (!currentUser) return openAuthModal();
-            const body = document.getElementById('auxModalBody');
-            document.getElementById('auxModalTitle').innerHTML = `<i class="fa-solid fa-list-check text-indigo-500"></i> Lịch Sử Nhận Điểm & Rút Tiền`;
-            body.innerHTML = `
-                <ul class="space-y-2 text-xs">
-                    ${(currentUser.logs || ['Chưa có biến động điểm.']).map(l => `
-                        <li class="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 font-medium">
-                            ${l}
-                        </li>
-                    `).join('')}
-                </ul>
-            `;
-            document.getElementById('auxModal').classList.remove('hidden');
-        }
-
-        function openCalculatorModal() {
-            const body = document.getElementById('auxModalBody');
-            document.getElementById('auxModalTitle').innerHTML = `<i class="fa-solid fa-calculator text-emerald-500"></i> Công Cụ Tính Tiền Hoàn Đổi ATM`;
-            body.innerHTML = `
-                <div class="space-y-3 text-xs">
-                    <p class="text-slate-500">Nhập tổng số tiền mẹ bỉm đã chi tiêu mua sắm trong tháng:</p>
-                    <input type="number" id="calcSpend" placeholder="Ví dụ: 2000000 (2 Triệu)" oninput="calcCashback()" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 text-sm font-bold outline-none dark:text-white">
-                    <div class="bg-rose-50 dark:bg-rose-950/40 p-4 rounded-2xl border border-rose-200 dark:border-rose-900 text-center">
-                        <p class="text-[11px] text-rose-700 dark:text-rose-300">Dự kiến số điểm thưởng tích lũy:</p>
-                        <p id="calcResult" class="text-2xl font-black text-rose-600 mt-1">0 Điểm (~0 VNĐ)</p>
-                    </div>
-                </div>
-            `;
-            document.getElementById('auxModal').classList.remove('hidden');
-        }
-
-        function calcCashback() {
-            const spend = parseInt(document.getElementById('calcSpend').value) || 0;
-            const points = Math.floor(spend * 0.02); // 2% average reward
-            document.getElementById('calcResult').textContent = `${points.toLocaleString()} Điểm (~${points.toLocaleString()} VNĐ)`;
-        }
-
-        function openCommunityModal() {
-            const body = document.getElementById('auxModalBody');
-            document.getElementById('auxModalTitle').innerHTML = `<i class="fa-solid fa-users text-purple-500"></i> Góc Chia Sẻ Kinh Nghiệm Chăm Bé`;
-            body.innerHTML = `
-                <div class="space-y-3 text-xs">
-                    <p class="text-slate-400 italic">Tính năng diễn đàn thảo luận realtime giữa các mẹ bỉm.</p>
-                    <div class="p-3 bg-rose-50 dark:bg-rose-950/40 rounded-2xl text-rose-800 dark:text-rose-200">
-                        💬 Mẹ Tôm: "Các mẹ cho em hỏi bình sữa Hegen dùng núm ti số mấy cho bé 3 tháng ạ?"
-                    </div>
-                    <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-                        💬 Mẹ Su: "Bé 3 tháng dùng núm số 2 vừa phải chảy không sợ sặc đâu mẹ nhé!"
-                    </div>
-                </div>
-            `;
-            document.getElementById('auxModal').classList.remove('hidden');
-        }
-
-        function openWishlistModal() {
-            const body = document.getElementById('auxModalBody');
-            document.getElementById('auxModalTitle').innerHTML = `<i class="fa-solid fa-heart text-rose-500"></i> Món Đồ Đã Yêu Thích`;
-            const favProds = products.filter(p => wishlists.includes(p.id));
-            if (favProds.length === 0) {
-                body.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">Chưa có món đồ nào trong danh sách yêu thích.</p>`;
+        window.handleAdminPinSubmit = function(e) {
+            e.preventDefault();
+            const pin = document.getElementById('adminPinInput').value;
+            if (pin === DEFAULT_ADMIN_PIN) {
+                isAdminUnlocked = true;
+                document.getElementById('adminPinSection').classList.add('hidden');
+                document.getElementById('adminContentSection').classList.remove('hidden');
+                loadAdminData();
+                showToast('Xác thực PIN Admin thành công!', 'success');
             } else {
-                body.innerHTML = `
-                    <div class="space-y-2">
-                        ${favProds.map(p => `
-                            <div class="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-between text-xs">
-                                <span class="font-bold line-clamp-1">${p.title}</span>
-                                <button onclick="openDetailModal('${p.id}')" class="text-rose-600 font-extrabold text-[11px] underline">Xem Chi Tiết</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                showToast('Mã PIN Admin không hợp lệ!', 'error');
             }
-            document.getElementById('auxModal').classList.remove('hidden');
+        };
+
+        window.switchAdminTab = function(tab) {
+            ['proofs', 'withdrawals', 'products', 'users'].forEach(t => {
+                document.getElementById(`adminSection${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('hidden', t !== tab);
+                const btn = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (btn) {
+                    btn.className = t === tab ? 'px-4 py-2 rounded-xl bg-purple-700 text-white shadow-sm flex items-center gap-1.5' : 'px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1.5';
+                }
+            });
+        };
+
+        function loadAdminData() {
+            // Load Pending Proofs
+            onSnapshot(collection(db, "proofs"), (snapshot) => {
+                const tbody = document.getElementById('adminProofTableBody');
+                let proofs = [];
+                snapshot.forEach(doc => proofs.push({ id: doc.id, ...doc.data() }));
+                
+                document.getElementById('adminProofCountBadge').innerText = `${proofs.filter(p => p.status==='pending').length} đơn chờ`;
+
+                if (proofs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-slate-400 italic">Chưa có đơn hàng nào.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = proofs.map(p => `
+                    <tr>
+                        <td class="p-3 font-mono text-[10px] text-slate-400">${p.timestamp ? new Date(p.timestamp.seconds*1000).toLocaleDateString('vi-VN') : 'Vừa xong'}</td>
+                        <td class="p-3 font-bold">${escapeHtml(p.userName)}<br><span class="text-[10px] text-slate-400">${escapeHtml(p.userEmail)}</span></td>
+                        <td class="p-3 line-clamp-1">${escapeHtml(p.productTitle)}</td>
+                        <td class="p-3 font-mono font-bold text-purple-600">${escapeHtml(p.orderId)}</td>
+                        <td class="p-3 font-black text-rose-500">+${p.rewardPoints}đ</td>
+                        <td class="p-3"><img src="${p.proofImg}" onclick="openLightbox(this.src)" class="w-10 h-10 object-cover rounded-lg cursor-pointer"></td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${p.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : p.status === 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}">${p.status}</span></td>
+                        <td class="p-3 text-right space-x-1">
+                            ${p.status === 'pending' ? `
+                                <button onclick="approveProof('${p.id}', '${p.userId}', ${p.rewardPoints})" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px]">Duyệt</button>
+                                <button onclick="rejectProof('${p.id}')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px]">Từ Chối</button>
+                            ` : '—'}
+                        </td>
+                    </tr>
+                `).join('');
+            });
+
+            // Load Pending Withdrawals
+            onSnapshot(collection(db, "withdrawals"), (snapshot) => {
+                const tbody = document.getElementById('adminWithdrawTableBody');
+                let withdrawals = [];
+                snapshot.forEach(doc => withdrawals.push({ id: doc.id, ...doc.data() }));
+
+                document.getElementById('adminWithdrawCountBadge').innerText = `${withdrawals.filter(w => w.status==='pending').length} yêu cầu`;
+
+                if (withdrawals.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-400 italic">Chưa có yêu cầu rút tiền nào.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = withdrawals.map(w => `
+                    <tr>
+                        <td class="p-3 font-mono text-[10px] text-slate-400">${w.timestamp ? new Date(w.timestamp.seconds*1000).toLocaleDateString('vi-VN') : 'Vừa xong'}</td>
+                        <td class="p-3 font-bold">${escapeHtml(w.userName)}<br><span class="text-[10px] text-slate-400">${escapeHtml(w.userEmail)}</span></td>
+                        <td class="p-3 font-black text-emerald-600">${w.amount.toLocaleString('vi-VN')} VNĐ</td>
+                        <td class="p-3 text-[11px]">
+                            <strong>${escapeHtml(w.bank?.bankName)}</strong><br>
+                            STK: <code class="font-mono font-bold">${escapeHtml(w.bank?.bankAccount)}</code><br>
+                            Chủ TK: ${escapeHtml(w.bank?.bankHolder)}
+                        </td>
+                        <td class="p-3">${w.bank?.qrUrl ? `<img src="${w.bank.qrUrl}" onclick="openLightbox(this.src)" class="w-10 h-10 object-cover rounded-lg cursor-pointer">` : 'Chưa có'}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${w.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${w.status}</span></td>
+                        <td class="p-3 text-right">
+                            ${w.status === 'pending' ? `
+                                <button onclick="approveWithdrawal('${w.id}')" class="bg-emerald-600 text-white font-bold px-2.5 py-1 rounded-lg text-[10px]">Đã Chuyển Tiền</button>
+                            ` : '—'}
+                        </td>
+                    </tr>
+                `).join('');
+            });
+
+            // Load Users
+            onSnapshot(collection(db, "users"), (snapshot) => {
+                const tbody = document.getElementById('adminUserTableBody');
+                let users = [];
+                snapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
+
+                document.getElementById('adminUserCountBadge').innerText = `${users.length} mẹ bỉm`;
+
+                tbody.innerHTML = users.map(u => `
+                    <tr>
+                        <td class="p-3 font-bold">${escapeHtml(u.name || 'Mẹ Bỉm')}<br><span class="text-[10px] text-slate-400">${escapeHtml(u.email)}</span></td>
+                        <td class="p-3 font-mono font-bold text-rose-500">${u.secretCode || '#'}</td>
+                        <td class="p-3 font-black text-amber-500">${(u.points || 0).toLocaleString('vi-VN')}đ</td>
+                        <td class="p-3 text-[10px]">${u.bank?.bankName ? `${u.bank.bankName} - ${u.bank.bankAccount}` : 'Chưa cập nhật'}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="giveUserPoints('${u.id}', 1000)" class="bg-purple-700 text-white font-bold px-2 py-1 rounded-md text-[10px]">+1.000 điểm</button>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+
+            renderAdminProductsTable();
         }
 
-        function openReminderModal() {
-            const body = document.getElementById('auxModalBody');
-            document.getElementById('auxModalTitle').innerHTML = `<i class="fa-solid fa-syringe text-teal-500"></i> Lịch Tiêm Chủng Chuẩn Cho Bé`;
-            body.innerHTML = `
-                <div class="space-y-2 text-xs">
-                    <div class="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <p class="font-bold text-slate-800 dark:text-white">👶 Sơ sinh (24h đầu):</p>
-                        <p class="text-slate-500">Vắc xin Lao (BCG) & Mũi 1 Viêm gan B.</p>
+        window.approveProof = async function(proofId, userId, rewardPoints) {
+            await updateDoc(doc(db, "proofs", proofId), { status: 'approved' });
+            
+            // Add points to user
+            const userSnap = await getDoc(doc(db, "users", userId));
+            if (userSnap.exists()) {
+                const currentPts = userSnap.data().points || 0;
+                await updateDoc(doc(db, "users", userId), { points: currentPts + rewardPoints });
+            }
+
+            showToast('Đã duyệt đơn hàng & cộng điểm cho mẹ bỉm!', 'success');
+        };
+
+        window.rejectProof = async function(proofId) {
+            await updateDoc(doc(db, "proofs", proofId), { status: 'rejected' });
+            showToast('Đã từ chối đơn hàng.', 'info');
+        };
+
+        window.approveWithdrawal = async function(withdrawId) {
+            await updateDoc(doc(db, "withdrawals", withdrawId), { status: 'approved' });
+            showToast('Đã xác nhận chuyển tiền ATM thành công!', 'success');
+        };
+
+        window.giveUserPoints = async function(userId, points) {
+            const userSnap = await getDoc(doc(db, "users", userId));
+            if (userSnap.exists()) {
+                const currentPts = userSnap.data().points || 0;
+                await updateDoc(doc(db, "users", userId), { points: currentPts + points });
+                showToast(`Đã thưởng +${points} điểm cho tài khoản!`, 'success');
+            }
+        };
+
+        function renderAdminProductsTable() {
+            const tbody = document.getElementById('adminProductTableBody');
+            tbody.innerHTML = products.map(p => `
+                <tr>
+                    <td class="p-3 font-bold line-clamp-1">${escapeHtml(p.title)}</td>
+                    <td class="p-3 font-bold text-rose-600">${p.price.toLocaleString('vi-VN')}đ</td>
+                    <td class="p-3 font-extrabold text-amber-500">${p.rewardPercent}%</td>
+                    <td class="p-3 uppercase text-[10px] font-bold">${p.category}</td>
+                    <td class="p-3 text-right space-x-1">
+                        <button onclick="editAdminProduct('${p.id}')" class="bg-slate-200 dark:bg-slate-700 font-bold px-2 py-1 rounded-md text-[10px]">Sửa</button>
+                        <button onclick="deleteAdminProduct('${p.id}')" class="bg-rose-600 text-white font-bold px-2 py-1 rounded-md text-[10px]">Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.saveAdminProduct = async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('adminProdId').value || 'prod_' + Date.now();
+            const productData = {
+                title: document.getElementById('adminProdTitle').value.trim(),
+                category: document.getElementById('adminProdCategory').value,
+                originalPrice: parseInt(document.getElementById('adminProdOriginalPrice').value) || 0,
+                price: parseInt(document.getElementById('adminProdPrice').value),
+                rewardPercent: parseInt(document.getElementById('adminProdRewardPercent').value),
+                ageStage: document.getElementById('adminProdAgeStage').value,
+                img: document.getElementById('adminProdImg').value.trim(),
+                affLink: document.getElementById('adminProdAffLink').value.trim(),
+                desc: document.getElementById('adminProdDesc').value.trim(),
+                rating: 5.0
+            };
+
+            await setDoc(doc(db, "products", id), productData);
+            showToast('Đã lưu sản phẩm thành công!', 'success');
+            resetProductAdminForm();
+        };
+
+        window.resetProductAdminForm = function() {
+            document.getElementById('adminProductForm').reset();
+            document.getElementById('adminProdId').value = '';
+        };
+
+        window.editAdminProduct = function(id) {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('adminProdId').value = p.id;
+            document.getElementById('adminProdTitle').value = p.title;
+            document.getElementById('adminProdCategory').value = p.category;
+            document.getElementById('adminProdOriginalPrice').value = p.originalPrice || '';
+            document.getElementById('adminProdPrice').value = p.price;
+            document.getElementById('adminProdRewardPercent').value = p.rewardPercent;
+            document.getElementById('adminProdAgeStage').value = p.ageStage || 'all';
+            document.getElementById('adminProdImg').value = p.img;
+            document.getElementById('adminProdAffLink').value = p.affLink;
+            document.getElementById('adminProdDesc').value = p.desc || '';
+        };
+
+        window.deleteAdminProduct = async function(id) {
+            await deleteDoc(doc(db, "products", id));
+            showToast('Đã xóa sản phẩm thành công!', 'info');
+        };
+
+        window.openLeaderboardModal = function() {
+            onSnapshot(collection(db, "users"), (snapshot) => {
+                let list = [];
+                snapshot.forEach(doc => list.push(doc.data()));
+                list.sort((a,b) => (b.points || 0) - (a.points || 0));
+
+                const listEl = document.getElementById('leaderboardList');
+                listEl.innerHTML = list.slice(0, 10).map((u, index) => `
+                    <div class="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full ${index === 0 ? 'bg-amber-400 text-white font-black' : index === 1 ? 'bg-slate-300 text-slate-800 font-black' : index === 2 ? 'bg-amber-600 text-white font-black' : 'bg-slate-200 dark:bg-slate-700 font-bold'} flex items-center justify-center text-[10px]">${index + 1}</span>
+                            <div>
+                                <p class="font-bold text-slate-800 dark:text-white">${escapeHtml(u.name || 'Mẹ Bỉm')}</p>
+                                <p class="text-[10px] text-slate-400 font-mono">${u.secretCode || '#'}</p>
+                            </div>
+                        </div>
+                        <span class="font-black text-rose-500">${(u.points || 0).toLocaleString('vi-VN')} điểm</span>
                     </div>
-                    <div class="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <p class="font-bold text-slate-800 dark:text-white">🍼 Bé 2 tháng tuổi:</p>
-                        <p class="text-slate-500">Vắc xin 6 trong 1 (Mũi 1) & Uống Rota Virus.</p>
+                `).join('');
+            });
+            openModal('leaderboardModal');
+        };
+
+        window.openTransactionLogModal = function() {
+            if (!currentUser) return openAuthModal('login');
+            
+            const q = query(collection(db, "transactions"), where("userId", "==", currentUser.uid));
+            onSnapshot(q, (snapshot) => {
+                let txs = [];
+                snapshot.forEach(doc => txs.push(doc.data()));
+                txs.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                const listEl = document.getElementById('transactionList');
+                if (txs.length === 0) {
+                    listEl.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4">Chưa có giao dịch điểm nào.</p>';
+                } else {
+                    listEl.innerHTML = txs.map(t => `
+                        <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-slate-800 dark:text-white">${escapeHtml(t.desc)}</p>
+                                <p class="text-[10px] text-slate-400">${t.timestamp ? new Date(t.timestamp.seconds*1000).toLocaleString('vi-VN') : 'Vừa xong'}</p>
+                            </div>
+                            <span class="font-black ${t.amount > 0 ? 'text-emerald-600' : 'text-rose-600'}">${t.amount > 0 ? '+' : ''}${t.amount.toLocaleString('vi-VN')} điểm</span>
+                        </div>
+                    `).join('');
+                }
+            });
+            openModal('transactionLogModal');
+        };
+
+        window.openCalculatorModal = function() {
+            openModal('calculatorModal');
+        };
+
+        window.calculateReward = function() {
+            const price = parseInt(document.getElementById('calcPriceInput').value) || 0;
+            const percent = parseFloat(document.getElementById('calcPercentInput').value) || 5;
+            const result = Math.round((price * percent) / 100);
+            document.getElementById('calcResultDisplay').innerText = `${result.toLocaleString('vi-VN')} Điểm = ${result.toLocaleString('vi-VN')} VNĐ`;
+        };
+
+        window.openCommunityModal = function() {
+            openModal('communityModal');
+        };
+
+        window.postCommunityMsg = async function(e) {
+            e.preventDefault();
+            if (!currentUser) return openAuthModal('login');
+
+            const text = document.getElementById('communityMsgInput').value.trim();
+            if (!text) return;
+
+            const commRef = ref(rtdb, 'community_posts');
+            await push(commRef, {
+                author: currentUser.displayName || 'Mẹ Bỉm',
+                text: text,
+                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+            });
+
+            document.getElementById('communityMsgInput').value = '';
+        };
+
+        window.openWishlistModal = function() {
+            if (!currentUser) return openAuthModal('login');
+            
+            const favProducts = products.filter(p => userData.wishlist && userData.wishlist.includes(p.id));
+            const grid = document.getElementById('wishlistGrid');
+            if (favProducts.length === 0) {
+                grid.innerHTML = '<p class="text-xs text-slate-400 italic col-span-2 text-center py-6">Chưa có sản phẩm yêu thích nào.</p>';
+            } else {
+                grid.innerHTML = favProducts.map(p => `
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs">
+                        <img src="${p.img}" class="w-full h-24 object-cover rounded-xl mb-2">
+                        <p class="font-bold line-clamp-1 dark:text-white">${escapeHtml(p.title)}</p>
+                        <p class="font-black text-rose-500 mt-0.5">${p.price.toLocaleString('vi-VN')}đ</p>
                     </div>
-                </div>
-            `;
-            document.getElementById('auxModal').classList.remove('hidden');
+                `).join('');
+            }
+            openModal('wishlistModal');
+        };
+
+        window.toggleWishlist = async function(prodId) {
+            if (!currentUser) return openAuthModal('login');
+            
+            let wishlist = userData.wishlist || [];
+            if (wishlist.includes(prodId)) {
+                wishlist = wishlist.filter(id => id !== prodId);
+                showToast('Đã xóa khỏi danh sách yêu thích', 'info');
+            } else {
+                wishlist.push(prodId);
+                showToast('Đã thêm vào yêu thích ❤️', 'success');
+            }
+
+            await updateDoc(doc(db, "users", currentUser.uid), { wishlist: wishlist });
+        };
+
+        window.openReminderModal = function() {
+            openModal('reminderModal');
+        };
+
+        window.openProfileModal = function() {
+            if (!currentUser) return openAuthModal('login');
+            openModal('profileModal');
+        };
+
+        window.copySecretCode = function() {
+            const code = document.getElementById('heroUserCode').innerText;
+            if (code.startsWith('#CHƯA')) return openAuthModal('login');
+            
+            navigator.clipboard.writeText(code);
+            showToast('Đã sao chép mã ẩn mẹ bỉm!', 'success');
+        };
+
+        window.openLightbox = function(src) {
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightboxModal').classList.remove('hidden');
+        };
+
+        window.closeLightbox = function() {
+            document.getElementById('lightboxModal').classList.add('hidden');
+        };
+
+        // Utility Modal Handlers
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
         }
 
-        function closeAuxModal() {
-            document.getElementById('auxModal').classList.add('hidden');
+        window.closeModal = function(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        };
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-slate-900 dark:bg-rose-600';
+            toast.className = `${bgClass} text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 transform transition-all duration-300 translate-y-5 opacity-0 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid ${type==='success'?'fa-circle-check':type==='error'?'fa-circle-exclamation':'fa-circle-info'}"></i> <span>${escapeHtml(message)}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-5', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-5');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
         }
 
-        function toggleNotificationPanel() {
-            document.getElementById('notifPanel').classList.toggle('hidden');
-        }
-
-        function handleSearch(mobile) {
-            renderProducts();
-        }
-
-        function resetFilters() {
-            currentCategoryFilter = 'all';
-            currentAgeFilter = 'all';
-            renderCategories();
-            renderAgeStages();
-            renderProducts();
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
 </body>
