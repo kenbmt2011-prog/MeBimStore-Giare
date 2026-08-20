@@ -672,10 +672,7 @@
                                     <label class="block font-bold mb-1">Độ Tuổi *</label>
                                     <select id="pAgeStage" required class="w-full bg-white dark:bg-darkbg border border-brand-200 rounded-xl p-2 outline-none font-bold">
                                         <option value="all">Mọi độ tuổi</option>
-EOF
-    ```
-```markdown:Góc Mẹ Bỉm - Realtime Web App Part 2:index_part2.html
-        <option value="0-6m">0 - 6 tháng</option>
+                                        <option value="0-6m">0 - 6 tháng</option>
                                         <option value="6-12m">6 - 12 tháng</option>
                                         <option value="1-3y">1 - 3 tuổi</option>
                                         <option value="3y+">Trên 3 tuổi</option>
@@ -907,7 +904,10 @@ EOF
             selectedAgeStage: 'all', 
             sortOption: 'hot', 
             searchQuery: '',
-            adminChatUserId: null
+            adminChatUserId: null,
+            adminFilesToUpload: [],
+            proofFilesToUpload: [],
+            selectedProductForProofId: null
         };
 
         // Format số dư hiển thị gọn gàng chống vỡ giao diện trên di động
@@ -919,11 +919,38 @@ EOF
             return num.toLocaleString('vi-VN');
         };
 
+        window.showToast = function(msg, isError = false) {
+            const t = document.getElementById('toastMessage');
+            document.getElementById('toastText').innerText = msg;
+            document.getElementById('toastIcon').className = isError ? "fa-solid fa-circle-exclamation text-red-400 text-base" : "fa-solid fa-circle-check text-green-400 text-base";
+            t.classList.remove('translate-y-10', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-10', 'opacity-0'), 3000);
+        };
+
+        // Modal Helpers
+        window.openModal = function(id) {
+            const el = document.getElementById(id);
+            if(!el) return;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.remove('opacity-0'), 10);
+            document.body.style.overflow = 'hidden';
+        };
+        
+        window.closeModal = function(id) {
+            const el = document.getElementById(id);
+            if(!el) return;
+            el.classList.add('opacity-0');
+            setTimeout(() => {
+                el.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 200);
+        };
+
         window.addEventListener('DOMContentLoaded', () => {
             renderFilterTabs();
             listenAuthChanges();
             listenDatabaseSync();
-            loadGeminiConfig();
+            loadUserWishlist();
         });
 
         // ---------------- UTILS & LOCALSTORAGE WISHLIST ----------------
@@ -1009,6 +1036,28 @@ EOF
             }
         }
 
+        window.openAuthModal = function(tab = 'login') {
+            window.switchAuthTab(tab);
+            window.openModal('authModal');
+        };
+        window.closeAuthModal = () => window.closeModal('authModal');
+        
+        window.switchAuthTab = function(tab) {
+            document.getElementById('tabLogin').classList.toggle('border-brand-500', tab==='login');
+            document.getElementById('tabLogin').classList.toggle('text-brand-600', tab==='login');
+            document.getElementById('tabLogin').classList.toggle('border-transparent', tab!=='login');
+            
+            document.getElementById('tabRegister').classList.toggle('border-brand-500', tab==='register');
+            document.getElementById('tabRegister').classList.toggle('text-brand-600', tab==='register');
+            document.getElementById('tabRegister').classList.toggle('border-transparent', tab!=='register');
+
+            document.getElementById('displayNameField').classList.toggle('hidden', tab==='login');
+            document.getElementById('authNote').classList.toggle('hidden', tab==='login');
+            
+            document.getElementById('authSubmitBtn').innerText = tab==='login' ? 'Đăng Nhập' : 'Đăng Ký & Nhận Quà';
+            document.getElementById('authForm').dataset.mode = tab;
+        };
+
         window.handleAuthSubmit = async function(e) {
             e.preventDefault();
             const mode = e.target.dataset.mode || 'login';
@@ -1032,18 +1081,55 @@ EOF
                 }
                 closeAuthModal();
             } catch (err) {
-                showToast("❌ Lỗi: " + err.message);
+                showToast("❌ Lỗi: " + err.message, true);
             }
         };
 
         window.handleLogout = () => { signOut(auth); showToast("Đã đăng xuất"); };
+
+        window.toggleTheme = function() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('themeIcon').className = isDark ? "fa-solid fa-sun text-sm sm:text-lg text-accent-400" : "fa-solid fa-moon text-sm sm:text-lg text-brand-600";
+        };
+
+        window.toggleNotificationPanel = function() {
+            const panel = document.getElementById('notifPanel');
+            panel.classList.toggle('hidden');
+        };
+
+        window.copySecretCode = function() {
+            const code = document.getElementById('heroUserCode').innerText;
+            if(code === '#CHƯA_ĐĂNG_NHẬP') return showToast("Vui lòng đăng nhập!", true);
+            navigator.clipboard.writeText(code);
+            showToast("Đã copy mã ẩn!");
+        };
+
+        window.claimDailyAttendance = async function() {
+            if(!window.appState.userProfile) return showToast("Đăng nhập để điểm danh", true);
+            const uid = window.appState.userProfile.uid;
+            const today = new Date().toISOString().split('T')[0];
+            const refDaily = ref(db, `users/${uid}/lastDaily`);
+            
+            const snapshot = await get(refDaily);
+            if(snapshot.val() === today) return showToast("Hôm nay bạn đã điểm danh rồi!", true);
+            
+            await update(ref(db, `users/${uid}`), {
+                lastDaily: today,
+                points: (window.appState.userProfile.points || 0) + 100
+            });
+            showToast("🎁 Điểm danh thành công! +100 điểm");
+        };
 
         // ---------------- REALTIME DATABASE SYNC ----------------
         function listenDatabaseSync() {
             onValue(ref(db, 'products'), (s) => {
                 const data = s.val() || {};
                 window.appState.products = Object.keys(data).map(id => ({id, ...data[id]})).reverse();
-                renderProductGrid(); renderAdminProductList();
+                renderProductGrid(); 
+                if (document.getElementById('adminSectionProducts') && !document.getElementById('adminSectionProducts').classList.contains('hidden')) {
+                    renderAdminProductList();
+                }
             });
             onValue(ref(db, 'proofs'), (s) => {
                 const data = s.val() || {};
@@ -1107,6 +1193,8 @@ EOF
         };
         window.resetFilters = () => {
             window.appState.selectedCategory = 'all'; window.appState.selectedAgeStage = 'all'; window.appState.searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
             renderFilterTabs(); renderProductGrid();
         };
 
@@ -1123,479 +1211,774 @@ EOF
             if (window.appState.sortOption === 'price-low') filtered.sort((a,b) => a.price - b.price);
             if (window.appState.sortOption === 'price-high') filtered.sort((a,b) => b.price - a.price);
             if (window.appState.sortOption === 'reward') filtered.sort((a,b) => b.rewardPoints - a.rewardPoints);
-            if (window.appState.sortOption === 'rating') filtered.sort((a,b) => (b.reviewCount || 0) - (a.reviewCount || 0));
+            // Default "hot" doesn't strictly sort, just keeps reverse chronological order.
 
             document.getElementById('productCount').innerText = `${filtered.length} món đồ`;
             document.getElementById('emptyState').classList.toggle('hidden', filtered.length > 0);
 
-            filtered.forEach(p => {
-                const mainImg = Array.isArray(p.imageUrls) && p.imageUrls.length > 0 ? p.imageUrls[0] : (p.imageUrl || 'https://placehold.co/400x400/d946ef/fff?text=No+Img');
-                const isFav = window.appState.wishlist.includes(p.id);
-                
-                // Badge HOT hiển thị rõ ràng
+            grid.innerHTML = filtered.map(p => {
                 let badgeHtml = '';
-                if(p.badge === 'HOT') badgeHtml = `<span class="bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase shadow">🔥 HOT</span>`;
-                else if(p.badge === 'BEST_SELLER') badgeHtml = `<span class="bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase shadow">⭐ BÁN CHẠY</span>`;
-                else if(p.badge === 'DEAL') badgeHtml = `<span class="bg-green-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase shadow">💰 DEAL SỐC</span>`;
+                if(p.badge === 'HOT') badgeHtml = `<div class="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md z-10 animate-pulse">🔥 HOT</div>`;
+                if(p.badge === 'BEST_SELLER') badgeHtml = `<div class="absolute top-2 left-2 bg-accent-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md z-10">⭐ BEST SELLER</div>`;
+                if(p.badge === 'DEAL') badgeHtml = `<div class="absolute top-2 left-2 bg-green-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md z-10">💰 DEAL SỐC</div>`;
 
-                // Hashtags
-                const hashtagsHtml = p.hashtags ? p.hashtags.map(t => `<span class="text-[9px] text-purple-600 font-bold mr-1">${t.trim()}</span>`).join('') : '';
+                const isWished = window.appState.wishlist.includes(p.id);
+                const wishIcon = isWished ? 'fa-solid text-red-500' : 'fa-regular text-brand-300';
+                const firstImg = (p.images && p.images.length > 0) ? p.images[0] : (p.imageUrl || 'https://via.placeholder.com/150');
 
-                grid.innerHTML += `
-                    <div class="bg-white dark:bg-darkcard border border-brand-100 dark:border-brand-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group flex flex-col h-full relative">
-                        <button onclick="toggleWishlist('${p.id}')" class="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-xs shadow ${isFav?'text-red-500':'text-slate-400 hover:text-red-500'} transition"><i class="fa-solid fa-heart"></i></button>
-                        <div class="aspect-square relative overflow-hidden bg-brand-50 cursor-pointer" onclick="openDetailModal('${p.id}')">
-                            <img src="${mainImg}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
-                            <div class="absolute top-2 left-2 flex flex-col gap-1 items-start">
-                                ${badgeHtml}
-                            </div>
-                            <div class="absolute bottom-2 left-2 bg-gradient-to-r from-accent-500 to-accent-400 text-slate-900 text-[9px] font-black px-2 py-0.5 rounded shadow-sm">
-                                +${window.formatCompactNumber(p.rewardPoints||0)}đ
-                            </div>
-                        </div>
-                        <div class="p-2.5 sm:p-3 flex flex-col flex-1">
-                            <h3 class="font-bold text-xs text-brand-800 dark:text-white line-clamp-2 mb-1 cursor-pointer hover:text-brand-500" onclick="openDetailModal('${p.id}')">${p.title}</h3>
-                            <div class="line-clamp-1 mb-1">${hashtagsHtml}</div>
-                            <div class="flex items-center gap-1 mb-2">
-                                <i class="fa-solid fa-star text-accent-500 text-[9px]"></i>
-                                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400">5.0 (Review)</span>
-                            </div>
-                            <div class="mt-auto flex items-end justify-between gap-1">
-                                <div class="min-w-0">
-                                    <p class="text-xs sm:text-sm font-black text-brand-600 dark:text-brand-400 truncate">${(p.price||0).toLocaleString('vi-VN')}đ</p>
-                                    ${p.originalPrice && p.originalPrice > p.price ? `<p class="text-[9px] text-slate-400 line-through truncate">${p.originalPrice.toLocaleString('vi-VN')}đ</p>` : ''}
-                                </div>
-                                <a href="${p.affiliateUrl}" target="_blank" rel="noopener noreferrer" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center shadow-md transition-transform hover:-translate-y-0.5 shrink-0">
-                                    <i class="fa-solid fa-cart-shopping text-xs"></i>
-                                </a>
-                            </div>
-                        </div>
+                return `
+                <div class="bg-white dark:bg-darkcard rounded-2xl border border-brand-100 dark:border-brand-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col relative">
+                    ${badgeHtml}
+                    <button onclick="toggleWishlist('${p.id}')" class="absolute top-2 right-2 w-7 h-7 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center z-10 shadow-sm hover:scale-110 transition-transform">
+                        <i class="${wishIcon} fa-heart text-xs"></i>
+                    </button>
+                    <div class="relative w-full pt-[100%] overflow-hidden cursor-pointer" onclick="openDetailModal('${p.id}')">
+                        <img src="${firstImg}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
                     </div>
-                `;
-            });
+                    <div class="p-2.5 sm:p-3 flex flex-col flex-1">
+                        <h3 class="text-xs sm:text-sm font-black text-brand-800 dark:text-white line-clamp-2 mb-1 cursor-pointer hover:text-brand-500 transition-colors" onclick="openDetailModal('${p.id}')">${p.title}</h3>
+                        <div class="flex items-center justify-between mb-2 mt-auto">
+                            <div>
+                                <p class="text-red-500 font-black text-xs sm:text-sm">${window.formatCompactNumber(p.price)}đ</p>
+                                ${p.originalPrice ? `<p class="text-slate-400 text-[9px] line-through">${window.formatCompactNumber(p.originalPrice)}đ</p>` : ''}
+                            </div>
+                            <div class="bg-accent-50 dark:bg-accent-900/30 px-2 py-1 rounded-lg border border-accent-200 flex flex-col items-center">
+                                <span class="text-[8px] font-bold text-accent-600">Thưởng</span>
+                                <span class="text-[10px] font-black text-accent-500">+${window.formatCompactNumber(p.rewardPoints)}</span>
+                            </div>
+                        </div>
+                        <a href="${p.affiliateUrl}" target="_blank" rel="noopener noreferrer" class="w-full bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/50 dark:hover:bg-brand-900 text-brand-700 dark:text-brand-300 font-extrabold text-[10px] sm:text-xs py-2 rounded-xl text-center transition-colors border border-brand-200 dark:border-brand-700 mb-1.5 flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-cart-shopping"></i> Mua Ngay
+                        </a>
+                        <button onclick="openProductSelectorForProof('${p.id}')" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-extrabold text-[10px] sm:text-xs py-2 rounded-xl text-center transition-colors flex items-center justify-center gap-1 shadow-md">
+                            <i class="fa-solid fa-receipt"></i> Tích Điểm
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
         };
 
-        // ---------------- PRODUCT DETAIL MODAL ----------------
-        window.openDetailModal = function(id) {
-            const p = window.appState.products.find(item => item.id === id);
-            if(!p) return;
+        // ---------------- LIGHTBOX ----------------
+        window.openLightbox = function(src) {
+            document.getElementById('lightboxImg').src = src;
+            window.openModal('lightboxModal');
+        };
+        window.closeLightbox = function() {
+            window.closeModal('lightboxModal');
+        };
 
-            const imgs = Array.isArray(p.imageUrls) && p.imageUrls.length > 0 ? p.imageUrls : [p.imageUrl || 'https://placehold.co/400'];
-            const galleryHtml = imgs.map((url, i) => `<img src="${url}" onclick="openLightbox(this.src)" class="w-20 h-20 object-cover rounded-xl border border-brand-200 cursor-pointer shadow-sm hover:opacity-90">`).join('');
+        // ---------------- PRODUCT DETAIL MODAL & COMMENTS ----------------
+        window.openDetailModal = function(id) {
+            const p = window.appState.products.find(x => x.id === id);
+            if(!p) return;
+            window.appState.currentDetailId = id;
+            
+            let imagesHtml = '';
+            if(p.images && p.images.length > 0) {
+                imagesHtml = p.images.map(img => `<img src="${img}" class="w-20 h-20 object-cover rounded-xl border border-brand-200 cursor-pointer hover:border-brand-500" onclick="document.getElementById('mainDetailImg').src=this.src">`).join('');
+            } else {
+                imagesHtml = `<img src="${p.imageUrl}" class="w-20 h-20 object-cover rounded-xl border border-brand-200 cursor-pointer">`;
+            }
+            
+            const firstImg = p.images ? p.images[0] : (p.imageUrl || 'https://via.placeholder.com/150');
 
             document.getElementById('modalContent').innerHTML = `
-                <div class="p-4 sm:p-6 space-y-4">
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <div class="w-full sm:w-1/2 space-y-2">
-                            <img src="${imgs[0]}" id="mainDetailImg" class="w-full aspect-square object-cover rounded-2xl border-2 border-brand-200 shadow-md">
-                            <div class="flex gap-2 overflow-x-auto custom-scrollbar pb-1">${galleryHtml}</div>
+                <div class="p-4 sm:p-6 flex flex-col md:flex-row gap-4 sm:gap-6">
+                    <div class="w-full md:w-2/5 flex flex-col gap-2">
+                        <img id="mainDetailImg" src="${firstImg}" class="w-full aspect-square object-cover rounded-2xl border-2 border-brand-100 dark:border-brand-800 shadow-md cursor-pointer" onclick="openLightbox(this.src)">
+                        <div class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                            ${imagesHtml}
                         </div>
-                        <div class="w-full sm:w-1/2 space-y-2.5">
-                            <div class="flex items-center gap-2">
-                                <span class="bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-200 text-[10px] font-black px-2.5 py-1 rounded-md uppercase">${p.category}</span>
-                                ${p.badge && p.badge !== 'NONE' ? `<span class="bg-red-500 text-white text-[10px] font-black px-2.5 py-1 rounded-md">${p.badge}</span>` : ''}
-                            </div>
-                            <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">${p.title}</h2>
-                            <div class="text-xl sm:text-2xl font-black text-brand-600 dark:text-brand-400">${(p.price||0).toLocaleString('vi-VN')} VNĐ</div>
-                            <div class="bg-accent-50 dark:bg-accent-900/30 border border-accent-300 dark:border-accent-700 p-2.5 rounded-xl text-xs font-bold text-accent-800 dark:text-accent-300 flex items-center gap-2">
-                                <i class="fa-solid fa-coins text-accent-500 text-base"></i> Tích ngay +${(p.rewardPoints||0).toLocaleString('vi-VN')} điểm khi hoàn thành đơn!
-                            </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">${p.description || 'Chưa có mô tả ngắn cho sản phẩm này.'}</p>
-                            <a href="${p.affiliateUrl}" target="_blank" class="block w-full bg-gradient-to-r from-brand-600 to-brand-500 text-white text-center font-black py-3 rounded-xl shadow-lg hover:from-brand-700 hover:to-brand-600 transition">
-                                <i class="fa-solid fa-cart-shopping"></i> Mua Ngay Trên Shopee / Tiktok
+                    </div>
+                    <div class="w-full md:w-3/5 flex flex-col">
+                        <span class="bg-brand-100 text-brand-700 text-[10px] px-2 py-0.5 rounded uppercase font-bold w-max mb-2">${p.category}</span>
+                        <h2 class="text-lg sm:text-xl font-black text-brand-800 dark:text-white mb-2">${p.title}</h2>
+                        <div class="flex items-center gap-3 mb-4 border-b border-brand-100 dark:border-brand-800 pb-3">
+                            <span class="text-2xl font-black text-red-500">${window.formatCompactNumber(p.price)}đ</span>
+                            ${p.originalPrice ? `<span class="text-sm line-through text-slate-400">${window.formatCompactNumber(p.originalPrice)}đ</span>` : ''}
+                        </div>
+                        <div class="bg-accent-50 border border-accent-200 rounded-xl p-3 mb-4">
+                            <p class="text-xs font-bold text-accent-700 flex items-center gap-1.5"><i class="fa-solid fa-gift"></i> Thưởng khi mua qua link:</p>
+                            <p class="text-xl font-black text-accent-500 mt-0.5">+${window.formatCompactNumber(p.rewardPoints)} Điểm</p>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4 whitespace-pre-wrap">${p.description || 'Chưa có mô tả chi tiết.'}</p>
+                        <div class="flex gap-2 mt-auto">
+                            <a href="${p.affiliateUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-brand-500 hover:bg-brand-600 text-white font-extrabold text-xs py-3 rounded-xl text-center transition-colors shadow-md">
+                                Mua Shopee/Tiktok
                             </a>
+                            <button onclick="openProductSelectorForProof('${p.id}')" class="flex-1 bg-accent-400 hover:bg-accent-500 text-slate-900 font-extrabold text-xs py-3 rounded-xl text-center transition-colors shadow-md">
+                                Khai Báo Đơn
+                            </button>
                         </div>
                     </div>
                 </div>
             `;
-            openModal('detailModal');
+            window.openModal('detailModal');
+            loadComments(id);
         };
-
-        window.closeDetailModal = () => closeModal('detailModal');
+        
+        window.closeDetailModal = () => { window.closeModal('detailModal'); window.appState.currentDetailId = null; };
         window.closeDetailModalOnBackdrop = (e) => {
-            if(e.target.id === 'detailModal') closeModal('detailModal');
+            if(e.target.id === 'detailModal') window.closeDetailModal();
         };
 
-        // ---------------- ADMIN MULTI-PHOTO UPLOAD (TỐI ĐA 50 ẢNH) ----------------
-        window.previewAdminMultiPhotos = function(e) {
-            const files = Array.from(e.target.files);
-            const container = document.getElementById('adminMultiPhotoPreview');
-            if(files.length > 50) {
-                showToast("⚠️ Chỉ được chọn tối đa 50 ảnh cùng lúc!");
-                e.target.value = '';
-                container.classList.add('hidden');
-                return;
-            }
-            container.innerHTML = '';
-            if(files.length > 0) {
-                container.classList.remove('hidden');
-                files.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        container.innerHTML += `<img src="${ev.target.result}" class="w-10 h-10 object-cover rounded border border-brand-200">`;
-                    };
-                    reader.readAsDataURL(file);
-                });
-            } else {
-                container.classList.add('hidden');
-            }
-        };
+        function loadComments(productId) {
+            const list = document.getElementById('commentList');
+            onValue(ref(db, `products/${productId}/comments`), (s) => {
+                const data = s.val() || {};
+                const comments = Object.keys(data).map(k => data[k]).reverse();
+                if(comments.length === 0) {
+                    list.innerHTML = `<p class="text-xs text-brand-400 italic text-center py-2">Chưa có bình luận nào. Mẹ hãy mở bát nhé!</p>`;
+                } else {
+                    list.innerHTML = comments.map(c => `
+                        <div class="bg-white dark:bg-darkcard border border-brand-100 dark:border-brand-800 p-2.5 rounded-xl shadow-sm">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-6 h-6 rounded-full bg-brand-200 text-brand-700 flex items-center justify-center text-[10px] font-bold">${c.userName.charAt(0).toUpperCase()}</div>
+                                <span class="font-bold text-[11px] text-brand-800 dark:text-brand-200">${c.userName}</span>
+                                <span class="text-[9px] text-slate-400 ml-auto">${new Date(c.time).toLocaleDateString()}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-700 dark:text-slate-300 ml-8">${c.text}</p>
+                        </div>
+                    `).join('');
+                }
+            });
+        }
 
-        window.handleAddProduct = async function(e) {
+        window.submitComment = async function(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnAdminAddProduct');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang tải lên...`;
+            if(!window.appState.currentUser) return showToast("Vui lòng đăng nhập để bình luận!", true);
+            const input = document.getElementById('commentInput');
+            const text = input.value.trim();
+            if(!text) return;
+            
+            const productId = window.appState.currentDetailId;
+            await push(ref(db, `products/${productId}/comments`), {
+                userId: window.appState.currentUser.uid,
+                userName: window.appState.userProfile.displayName,
+                text: text,
+                time: new Date().toISOString()
+            });
+            input.value = '';
+            showToast("Đã gửi bình luận!");
+        };
+
+        // ---------------- WALLET & BANKING ----------------
+        window.openWalletModal = function(tab = 'wallet') {
+            if(!window.appState.currentUser) return showToast("Vui lòng đăng nhập!", true);
+            document.getElementById('modalUserPoints').innerText = window.formatCompactNumber(window.appState.userProfile.points || 0);
+            document.getElementById('modalUserVnd').innerText = window.formatCompactNumber(window.appState.userProfile.points || 0);
+            document.getElementById('walletUserName').innerText = window.appState.userProfile.displayName;
+            document.getElementById('userSecretCode').innerText = window.appState.userProfile.secretCode;
+            
+            // Fill existing data
+            document.getElementById('bankName').value = window.appState.userProfile.bankName || '';
+            document.getElementById('bankAccount').value = window.appState.userProfile.bankAccount || '';
+            document.getElementById('bankHolder').value = window.appState.userProfile.bankHolder || '';
+            
+            if(window.appState.userProfile.bankQrUrl) {
+                document.getElementById('qrPreviewImg').src = window.appState.userProfile.bankQrUrl;
+                document.getElementById('qrPreviewContainer').classList.remove('hidden');
+                document.getElementById('existingQrUrl').value = window.appState.userProfile.bankQrUrl;
+            }
+
+            window.switchWalletTab(tab === 'withdraw' ? 'withdraw' : 'bank');
+            window.openModal('walletModal');
+        };
+        window.closeWalletModal = () => window.closeModal('walletModal');
+
+        window.switchWalletTab = function(tab) {
+            const isBank = tab === 'bank';
+            document.getElementById('tabBankBtn').className = isBank ? "flex-1 py-2 text-[11px] sm:text-xs font-bold rounded-xl bg-brand-600 text-white shadow-sm transition-colors" : "flex-1 py-2 text-[11px] sm:text-xs font-bold rounded-xl bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 transition-colors";
+            document.getElementById('tabWithdrawBtn').className = !isBank ? "flex-1 py-2 text-[11px] sm:text-xs font-bold rounded-xl bg-brand-600 text-white shadow-sm transition-colors" : "flex-1 py-2 text-[11px] sm:text-xs font-bold rounded-xl bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 transition-colors";
+            
+            document.getElementById('sectionBank').classList.toggle('hidden', !isBank);
+            document.getElementById('sectionWithdraw').classList.toggle('hidden', isBank);
+        };
+
+        window.previewQrUpload = function(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('qrPreviewImg').src = e.target.result;
+                    document.getElementById('qrPreviewContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        window.saveBankInfo = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveBank');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
             btn.disabled = true;
 
             try {
-                const files = Array.from(document.getElementById('pImageFiles').files);
-                if(files.length === 0) throw new Error("Vui lòng chọn ít nhất 1 ảnh!");
-                if(files.length > 50) throw new Error("Vui lòng chọn tối đa 50 ảnh!");
-
-                const imageUrls = [];
-                for(let file of files) {
-                    const url = await uploadFileToStorage(file, 'products');
-                    imageUrls.push(url);
+                let qrUrl = document.getElementById('existingQrUrl').value;
+                const fileInput = document.getElementById('bankQrFile');
+                if(fileInput.files.length > 0) {
+                    qrUrl = await uploadFileToStorage(fileInput.files[0], 'qrcodes');
                 }
 
-                const hashtagsRaw = document.getElementById('pHashtags').value;
-                const hashtags = hashtagsRaw ? hashtagsRaw.split(',').map(t => t.trim()).filter(t => t.length > 0) : [];
-
-                const newProd = {
-                    title: document.getElementById('pTitle').value.trim(),
-                    category: document.getElementById('pCategory').value,
-                    ageStage: document.getElementById('pAgeStage').value,
-                    price: parseInt(document.getElementById('pPrice').value),
-                    originalPrice: parseInt(document.getElementById('pOriginalPrice').value) || parseInt(document.getElementById('pPrice').value),
-                    rewardPoints: parseInt(document.getElementById('pRewardPoints').value),
-                    affiliateUrl: document.getElementById('pAffiliateUrl').value.trim(),
-                    imageUrls: imageUrls,
-                    hashtags: hashtags,
-                    badge: document.getElementById('pBadge').value,
-                    description: document.getElementById('pDescription').value.trim(),
-                    reviewCount: Math.floor(Math.random() * 20) + 5,
-                    createdAt: serverTimestamp()
-                };
-
-                await push(ref(db, 'products'), newProd);
-                showToast("✅ Đã đăng sản phẩm mượt mà!");
-                document.getElementById('addProductForm').reset();
-                document.getElementById('adminMultiPhotoPreview').classList.add('hidden');
-            } catch (err) {
-                showToast("❌ Lỗi: " + err.message);
+                await update(ref(db, 'users/' + window.appState.currentUser.uid), {
+                    bankName: document.getElementById('bankName').value,
+                    bankAccount: document.getElementById('bankAccount').value,
+                    bankHolder: document.getElementById('bankHolder').value,
+                    bankQrUrl: qrUrl
+                });
+                showToast("Đã lưu thông tin ngân hàng!");
+            } catch(err) {
+                showToast("Lỗi: " + err.message, true);
             } finally {
-                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Đăng Lên Trang Web (Realtime)`;
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Lưu Thông Tin & Mã QR';
                 btn.disabled = false;
             }
         };
 
-        window.deleteProduct = async function(id) {
-            if(confirm("Bạn chắc chắn muốn xóa sản phẩm này?")) {
-                await remove(ref(db, 'products/' + id));
-                showToast("Đã xóa sản phẩm!");
-            }
-        };
-
-        window.renderAdminProductList = function() {
-            const list = document.getElementById('adminProductList');
-            if(!list) return;
-            list.innerHTML = '';
-            window.appState.products.forEach(p => {
-                const img = Array.isArray(p.imageUrls) && p.imageUrls.length > 0 ? p.imageUrls[0] : (p.imageUrl || 'https://placehold.co/100');
-                list.innerHTML += `
-                    <div class="flex items-center justify-between p-2 bg-white dark:bg-darkbg border border-brand-100 rounded-xl mb-1 shadow-sm">
-                        <div class="flex items-center gap-2 overflow-hidden">
-                            <img src="${img}" class="w-10 h-10 object-cover rounded shadow-sm">
-                            <div class="truncate">
-                                <p class="text-[11px] font-bold text-brand-800 dark:text-white truncate w-40 sm:w-60">${p.title}</p>
-                                <p class="text-[9px] text-accent-600 font-black">+${(p.rewardPoints||0).toLocaleString('vi-VN')} đ</p>
-                            </div>
-                        </div>
-                        <button onclick="deleteProduct('${p.id}')" class="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow shrink-0"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-            });
-        };
-
-        // ---------------- ADMIN PROOFS & WITHDRAWALS ----------------
-        window.renderAdminProofs = function() {
-            const body = document.getElementById('adminProofTableBody');
-            if(!body) return;
-            body.innerHTML = '';
-            
-            const pending = window.appState.proofs.filter(p => p.status === 'pending');
-            document.getElementById('adminProofCountBadge').innerText = `${pending.length} đơn chờ`;
-
-            window.appState.proofs.forEach(p => {
-                const mediaHtml = Array.isArray(p.imgUrls) ? p.imgUrls.map(u => `<img src="${u}" onclick="openLightbox('${u}')" class="w-8 h-8 object-cover rounded border cursor-pointer inline-block mr-1">`).join('') : `<img src="${p.imgUrl||'https://placehold.co/100'}" onclick="openLightbox('${p.imgUrl}')" class="w-8 h-8 object-cover rounded border cursor-pointer">`;
-                
-                body.innerHTML += `
-                    <tr class="hover:bg-brand-50/50 dark:hover:bg-brand-900/30">
-                        <td class="p-2.5 text-[10px] font-mono">${new Date(p.createdAt||Date.now()).toLocaleDateString('vi-VN')}</td>
-                        <td class="p-2.5 font-bold">${p.userEmail||p.userId}</td>
-                        <td class="p-2.5 truncate max-w-[120px]">${p.productTitle||'Sản phẩm'}</td>
-                        <td class="p-2.5 font-mono font-bold text-purple-600">${p.orderId}</td>
-                        <td class="p-2.5 font-black text-accent-600">+${window.formatCompactNumber(p.rewardPoints||0)}đ</td>
-                        <td class="p-2.5">${mediaHtml}</td>
-                        <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${p.status==='approved'?'bg-green-100 text-green-700':p.status==='rejected'?'bg-red-100 text-red-700':'bg-yellow-100 text-yellow-700'}">${p.status}</span></td>
-                        <td class="p-2.5 text-right space-x-1">
-                            ${p.status==='pending'?`
-                                <button onclick="approveProof('${p.id}', '${p.userId}', ${p.rewardPoints||0})" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[10px] font-bold">Duyệt</button>
-                                <button onclick="rejectProof('${p.id}')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-[10px] font-bold">Từ chối</button>
-                            `:''}
-                        </td>
-                    </tr>
-                `;
-            });
-        };
-
-        window.approveProof = async function(proofId, userId, points) {
-            await update(ref(db, `proofs/${proofId}`), { status: 'approved' });
-            const userSnap = await get(ref(db, `users/${userId}`));
-            if(userSnap.exists()) {
-                const cur = userSnap.val().points || 0;
-                await update(ref(db, `users/${userId}`), { points: cur + points });
-            }
-            showToast("✅ Đã duyệt đơn và cộng điểm!");
-        };
-
-        window.rejectProof = async function(proofId) {
-            await update(ref(db, `proofs/${proofId}`), { status: 'rejected' });
-            showToast("Đã từ chối đơn");
-        };
-
-        window.renderAdminWithdrawals = function() {
-            const body = document.getElementById('adminWithdrawTableBody');
-            if(!body) return;
-            body.innerHTML = '';
-            
-            const pending = window.appState.withdrawals.filter(w => w.status === 'pending');
-            document.getElementById('adminWithdrawCountBadge').innerText = `${pending.length} yêu cầu`;
-
-            window.appState.withdrawals.forEach(w => {
-                body.innerHTML += `
-                    <tr class="hover:bg-brand-50/50 dark:hover:bg-brand-900/30">
-                        <td class="p-2.5 text-[10px] font-mono">${new Date(w.createdAt||Date.now()).toLocaleDateString('vi-VN')}</td>
-                        <td class="p-2.5 font-bold">${w.userEmail||w.userId}</td>
-                        <td class="p-2.5 font-black text-green-600">${(w.amount||0).toLocaleString('vi-VN')}đ</td>
-                        <td class="p-2.5 text-[10px]"><b>${w.bankName}</b><br>${w.bankAccount} (${w.bankHolder})</td>
-                        <td class="p-2.5">${w.bankQrUrl ? `<img src="${w.bankQrUrl}" onclick="openLightbox('${w.bankQrUrl}')" class="w-8 h-8 object-contain rounded border bg-white cursor-pointer">` : 'Không có'}</td>
-                        <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${w.status==='completed'?'bg-green-100 text-green-700':'bg-yellow-100 text-yellow-700'}">${w.status}</span></td>
-                        <td class="p-2.5 text-right">
-                            ${w.status==='pending'?`
-                                <button onclick="completeWithdrawal('${w.id}')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[10px] font-bold">Xác nhận đã ck</button>
-                            `:''}
-                        </td>
-                    </tr>
-                `;
-            });
-        };
-
-        window.completeWithdrawal = async function(id) {
-            await update(ref(db, `withdrawals/${id}`), { status: 'completed' });
-            showToast("✅ Đã hoàn tất chuyển khoản!");
-        };
-
-        // ---------------- ADMIN USERS MANAGEMENT (+/- POINT & BLOCK) ----------------
-        window.renderAdminUsers = function() {
-            const body = document.getElementById('adminUsersTableBody');
-            if(!body) return;
-            body.innerHTML = '';
-
-            window.appState.users.forEach(u => {
-                body.innerHTML += `
-                    <tr class="hover:bg-brand-50/50 dark:hover:bg-brand-900/30">
-                        <td class="p-2.5 font-bold">${u.displayName||'Mẹ bỉm'}<br><span class="text-[9px] text-accent-600 font-mono">${u.secretCode||''}</span></td>
-                        <td class="p-2.5 text-[10px]">${u.email}</td>
-                        <td class="p-2.5 font-black text-brand-600">${window.formatCompactNumber(u.points||0)}đ</td>
-                        <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${u.isBlocked?'bg-red-500 text-white':'bg-green-100 text-green-700'}">${u.isBlocked?'ĐÃ KHÓA':'BÌNH THƯỜNG'}</span></td>
-                        <td class="p-2.5 text-right space-x-1">
-                            <button onclick="adminAdjustPoints('${u.uid}', 10000)" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-[10px] font-bold">+10k</button>
-                            <button onclick="adminAdjustPoints('${u.uid}', -10000)" class="bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded text-[10px] font-bold">-10k</button>
-                            <button onclick="adminToggleBlockUser('${u.uid}', ${!u.isBlocked})" class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-[10px] font-bold">${u.isBlocked?'Mở khóa':'Khóa'}</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        };
-
-        window.adminAdjustPoints = async function(uid, amount) {
-            const snap = await get(ref(db, `users/${uid}`));
-            if(snap.exists()) {
-                const cur = snap.val().points || 0;
-                await update(ref(db, `users/${uid}`), { points: Math.max(0, cur + amount) });
-                showToast(`Đã điều chỉnh ${amount > 0 ? '+' : ''}${amount} điểm!`);
-            }
-        };
-
-        window.adminToggleBlockUser = async function(uid, shouldBlock) {
-            await update(ref(db, `users/${uid}`), { isBlocked: shouldBlock });
-            showToast(shouldBlock ? "Đã khóa tài khoản!" : "Đã mở khóa tài khoản!");
-        };
-
-        // ---------------- GEMINI AI INTEGRATION FOR ADMIN ----------------
-        window.saveGeminiConfig = function() {
-            const key = document.getElementById('geminiApiKey').value.trim();
-            const model = document.getElementById('geminiModel').value;
-            localStorage.setItem('mb_gemini_key', key);
-            localStorage.setItem('mb_gemini_model', model);
-        };
-
-        function loadGeminiConfig() {
-            const key = localStorage.getItem('mb_gemini_key') || '';
-            const model = localStorage.getItem('mb_gemini_model') || 'gemini-2.5-flash';
-            if(document.getElementById('geminiApiKey')) document.getElementById('geminiApiKey').value = key;
-            if(document.getElementById('geminiModel')) document.getElementById('geminiModel').value = model;
-        }
-
-        window.handleAiChatSubmit = async function(e) {
+        window.submitWithdrawalRequestCustom = async function(e) {
             e.preventDefault();
-            const apiKey = document.getElementById('geminiApiKey').value.trim();
-            const model = document.getElementById('geminiModel').value;
-            const prompt = document.getElementById('aiInputPrompt').value.trim();
-            const systemPrompt = document.getElementById('geminiSystemPrompt').value;
-            const fileInput = document.getElementById('aiImageInput');
+            const p = window.appState.userProfile;
+            if(!p.bankName || !p.bankQrUrl) return showToast("Vui lòng cập nhật đầy đủ Ngân Hàng và Mã QR trước khi rút!", true);
+            
+            const amount = parseInt(document.getElementById('withdrawAmountInput').value);
+            if(amount < 10000) return showToast("Tối thiểu rút 10.000đ", true);
+            if(amount > p.points) return showToast("Số dư không đủ!", true);
 
-            if(!apiKey) return showToast("⚠️ Vui lòng nhập Gemini API Key!");
+            await update(ref(db, 'users/' + p.uid), { points: p.points - amount });
+            await push(ref(db, 'withdrawals'), {
+                userId: p.uid,
+                userName: p.displayName,
+                secretCode: p.secretCode,
+                amount: amount,
+                bankName: p.bankName,
+                bankAccount: p.bankAccount,
+                bankHolder: p.bankHolder,
+                bankQrUrl: p.bankQrUrl,
+                status: 'pending',
+                time: new Date().toISOString()
+            });
 
-            const chatBox = document.getElementById('aiChatBox');
-            chatBox.innerHTML += `
-                <div class="self-end bg-purple-600 text-white p-2.5 rounded-2xl rounded-tr-none max-w-[85%] ml-auto shadow">
-                    <p class="font-bold">Admin Prompt:</p>
-                    <p>${prompt}</p>
+            showToast("Đã gửi yêu cầu rút tiền! Chờ Admin duyệt.");
+            window.closeWalletModal();
+        };
+
+        // ---------------- PROOF SUBMISSION ----------------
+        window.openProductSelectorForProof = function(prefillId = null) {
+            if(!window.appState.currentUser) return showToast("Vui lòng đăng nhập!", true);
+            
+            if(prefillId) {
+                const p = window.appState.products.find(x => x.id === prefillId);
+                if(p) {
+                    window.appState.selectedProductForProofId = p.id;
+                    document.getElementById('selectedProductTitle').innerText = p.title;
+                    document.getElementById('selectedProductId').value = p.id;
+                    window.closeDetailModal();
+                }
+            } else {
+                document.getElementById('selectedProductTitle').innerText = "Chưa chọn sản phẩm nào...";
+                document.getElementById('selectedProductId').value = "";
+                window.appState.selectedProductForProofId = null;
+            }
+            window.appState.proofFilesToUpload = [];
+            document.getElementById('proofPreviewContainerMultiple').innerHTML = '';
+            document.getElementById('proofPreviewContainerMultiple').classList.add('hidden');
+            document.getElementById('proofForm').reset();
+            window.openModal('proofModal');
+        };
+        window.closeProofModal = () => window.closeModal('proofModal');
+
+        window.openProductSelectorModal = function() {
+            const list = document.getElementById('productPickerList');
+            list.innerHTML = window.appState.products.map(p => `
+                <div class="flex items-center gap-2 p-2 border border-brand-100 rounded-xl cursor-pointer hover:bg-brand-50" onclick="selectProductForProof('${p.id}', '${p.title.replace(/'/g, "\\'")}')">
+                    <img src="${(p.images&&p.images[0])||p.imageUrl||'https://via.placeholder.com/150'}" class="w-12 h-12 object-cover rounded shadow-sm">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-[11px] font-bold text-brand-800 truncate">${p.title}</p>
+                        <p class="text-[10px] text-accent-500 font-bold">Thưởng: +${p.rewardPoints}</p>
+                    </div>
                 </div>
-            `;
-            chatBox.scrollTop = chatBox.scrollHeight;
+            `).join('');
+            window.openModal('productPickerModal');
+        };
+        window.closeProductPickerModal = () => window.closeModal('productPickerModal');
 
-            const btn = document.getElementById('aiSendBtn');
-            btn.disabled = true; btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Gemini đang xử lý...`;
+        window.selectProductForProof = function(id, title) {
+            window.appState.selectedProductForProofId = id;
+            document.getElementById('selectedProductTitle').innerText = title;
+            document.getElementById('selectedProductId').value = id;
+            window.closeProductPickerModal();
+        };
+
+        window.previewProofMultiple = function(e) {
+            const files = Array.from(e.target.files);
+            window.appState.proofFilesToUpload = files;
+            const container = document.getElementById('proofPreviewContainerMultiple');
+            container.innerHTML = '';
+            if(files.length > 0) container.classList.remove('hidden');
+            else container.classList.add('hidden');
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    if(file.type.startsWith('image/')) {
+                        container.innerHTML += `<img src="${ev.target.result}" class="w-full h-20 object-cover rounded border border-brand-200">`;
+                    } else {
+                        container.innerHTML += `<div class="w-full h-20 bg-slate-200 rounded flex items-center justify-center text-[10px] font-bold">Video</div>`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        };
+
+        window.submitOrderProof = async function(e) {
+            e.preventDefault();
+            const pid = document.getElementById('selectedProductId').value;
+            if(!pid) return showToast("Vui lòng chọn món đồ đã mua!", true);
+            if(window.appState.proofFilesToUpload.length === 0) return showToast("Cần tải lên ảnh/video", true);
+
+            const btn = document.getElementById('btnSubmitProof');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tải lên...';
+            btn.disabled = true;
 
             try {
-                let contents = [{
-                    parts: [{ text: `${systemPrompt}\n\nYêu cầu Admin: ${prompt}` }]
-                }];
-
-                // Xử lý ảnh nếu đính kèm
-                if(fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const base64 = await new Promise((resolve) => {
-                        const r = new FileReader();
-                        r.onload = e => resolve(e.target.result.split(',')[1]);
-                        r.readAsDataURL(file);
-                    });
-                    contents[0].parts.push({
-                        inline_data: { mime_type: file.type, data: base64 }
-                    });
+                let fileUrls = [];
+                for(let file of window.appState.proofFilesToUpload) {
+                    let url = await uploadFileToStorage(file, 'proofs');
+                    fileUrls.push(url);
                 }
 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: contents })
+                const product = window.appState.products.find(x => x.id === pid);
+                
+                await push(ref(db, 'proofs'), {
+                    userId: window.appState.currentUser.uid,
+                    userName: window.appState.userProfile.displayName,
+                    secretCode: window.appState.userProfile.secretCode,
+                    productId: pid,
+                    productTitle: product.title,
+                    rewardPoints: product.rewardPoints,
+                    orderId: document.getElementById('proofOrderId').value,
+                    note: document.getElementById('proofNote').value,
+                    files: fileUrls,
+                    status: 'pending',
+                    time: new Date().toISOString()
                 });
 
-                const data = await response.json();
-                const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Không có phản hồi từ Gemini API.";
-
-                chatBox.innerHTML += `
-                    <div class="bg-white dark:bg-darkcard border border-brand-200 dark:border-brand-700 p-2.5 rounded-2xl rounded-tl-none max-w-[90%] shadow-sm">
-                        <p class="font-black text-purple-600 mb-0.5">🤖 Gemini AI (${model}):</p>
-                        <div class="text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap">${aiReply}</div>
-                    </div>
-                `;
-                document.getElementById('aiInputPrompt').value = '';
-                fileInput.value = '';
+                showToast("Đã gửi đơn chờ duyệt!");
+                window.closeProofModal();
             } catch (err) {
-                chatBox.innerHTML += `<p class="text-red-500 font-bold">Lỗi Gemini API: ${err.message}</p>`;
+                showToast("Lỗi: " + err.message, true);
             } finally {
-                btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Gửi AI`;
-                chatBox.scrollTop = chatBox.scrollHeight;
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Gửi Đơn Tích Điểm';
+                btn.disabled = false;
             }
         };
 
-        // ---------------- REALTIME COMPLAINT / CHAT SYSTEM ----------------
+        // ---------------- OTHERS MODALS ----------------
+        window.openLeaderboardModal = () => {
+            const list = document.getElementById('leaderboardList');
+            const sorted = [...window.appState.users].sort((a,b) => (b.points||0) - (a.points||0)).slice(0, 10);
+            list.innerHTML = sorted.map((u, i) => `
+                <div class="flex items-center gap-3 p-2.5 border-b border-brand-100">
+                    <div class="w-6 h-6 rounded-full flex items-center justify-center font-black ${i===0?'bg-yellow-400':i===1?'bg-gray-300':i===2?'bg-amber-600':'bg-brand-100'}">${i+1}</div>
+                    <div>
+                        <p class="font-bold text-[11px]">${u.displayName}</p>
+                        <p class="text-[9px] text-slate-400">${u.secretCode}</p>
+                    </div>
+                    <div class="ml-auto font-black text-accent-500">${window.formatCompactNumber(u.points)}</div>
+                </div>
+            `).join('');
+            window.openModal('leaderboardModal');
+        };
+        window.closeLeaderboardModal = () => window.closeModal('leaderboardModal');
+
+        window.openTransactionLogModal = () => {
+            if(!window.appState.currentUser) return showToast("Đăng nhập để xem lịch sử", true);
+            const uid = window.appState.currentUser.uid;
+            const myProofs = window.appState.proofs.filter(p => p.userId === uid);
+            const list = document.getElementById('transactionLogList');
+            if(myProofs.length===0) list.innerHTML = '<p class="text-center italic py-4">Chưa có giao dịch.</p>';
+            else list.innerHTML = myProofs.map(p => `
+                <div class="p-2 border border-brand-100 rounded-lg mb-2">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-bold text-[10px] truncate max-w-[70%]">${p.productTitle}</span>
+                        <span class="font-black ${p.status==='approved'?'text-green-500':p.status==='rejected'?'text-red-500':'text-yellow-500'}">${p.status}</span>
+                    </div>
+                    <div class="text-[9px] text-slate-400 flex justify-between">
+                        <span>Đơn: ${p.orderId}</span>
+                        <span>${new Date(p.time).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `).join('');
+            window.openModal('transactionLogModal');
+        };
+        window.closeTransactionLogModal = () => window.closeModal('transactionLogModal');
+
+        window.openCalculatorModal = () => {
+            document.getElementById('calcOrderValue').value = '';
+            document.getElementById('calcResult').innerText = '0 VNĐ (0 Điểm)';
+            window.openModal('calculatorModal');
+        };
+        window.closeCalculatorModal = () => window.closeModal('calculatorModal');
+        window.calculateCashback = () => {
+            const val = parseFloat(document.getElementById('calcOrderValue').value) || 0;
+            const rate = parseFloat(document.getElementById('calcRate').value) || 0;
+            const res = (val * rate) / 100;
+            document.getElementById('calcResult').innerText = `${window.formatCompactNumber(res)} VNĐ (${window.formatCompactNumber(res)} Điểm)`;
+        };
+
+        window.openCommunityModal = () => window.openModal('communityModal');
+        window.closeCommunityModal = () => window.closeModal('communityModal');
+        
+        window.openReminderModal = () => window.openModal('reminderModal');
+        window.closeReminderModal = () => window.closeModal('reminderModal');
+
+        window.openWishlistModal = () => {
+            const container = document.getElementById('wishlistContainer');
+            const wishes = window.appState.products.filter(p => window.appState.wishlist.includes(p.id));
+            if(wishes.length === 0) container.innerHTML = '<p class="text-center py-4">Chưa lưu món đồ nào.</p>';
+            else {
+                container.innerHTML = wishes.map(p => `
+                    <div class="flex items-center gap-2 p-2 border border-brand-100 rounded-xl">
+                        <img src="${(p.images&&p.images[0])||p.imageUrl||'https://via.placeholder.com/150'}" class="w-12 h-12 object-cover rounded cursor-pointer" onclick="openDetailModal('${p.id}')">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-[11px] truncate cursor-pointer hover:text-brand-500" onclick="openDetailModal('${p.id}')">${p.title}</p>
+                            <p class="text-[10px] text-red-500">${window.formatCompactNumber(p.price)}đ</p>
+                        </div>
+                        <button onclick="toggleWishlist('${p.id}'); setTimeout(openWishlistModal, 100)" class="p-2 text-red-500"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `).join('');
+            }
+            window.openModal('wishlistModal');
+        };
+        window.closeWishlistModal = () => window.closeModal('wishlistModal');
+
+        // ---------------- CHAT & COMPLAINT SYSTEM (USER) ----------------
+        window.toggleComplaintChat = function() {
+            if(!window.appState.currentUser) return showToast("Vui lòng đăng nhập để chat!", true);
+            const w = document.getElementById('complaintChatWindow');
+            w.classList.toggle('hidden');
+            if(!w.classList.contains('hidden')) {
+                document.getElementById('chatUnreadBadge').classList.add('hidden');
+                setTimeout(() => {
+                    const box = document.getElementById('complaintMessagesBox');
+                    box.scrollTop = box.scrollHeight;
+                }, 100);
+            }
+        };
+
         function listenUserComplaints() {
             if(!window.appState.currentUser) return;
-            onValue(ref(db, `complaints/${window.appState.currentUser.uid}`), (s) => {
+            onValue(ref(db, `complaints/${window.appState.currentUser.uid}/messages`), (s) => {
                 const data = s.val() || {};
+                const msgs = Object.keys(data).map(k => data[k]);
                 const box = document.getElementById('complaintMessagesBox');
-                if(!box) return;
-                box.innerHTML = `<div class="self-start bg-white dark:bg-brand-900 border border-brand-100 p-2 rounded-xl text-slate-700"><p class="font-bold text-brand-600">🤖 CSKH Góc Mẹ Bỉm:</p><p>Chào mẹ bỉm! Mẹ cần hỗ trợ gì hãy nhắn tin nhé.</p></div>`;
+                box.innerHTML = msgs.map(m => {
+                    if(m.sender === 'admin') {
+                        return `
+                        <div class="self-start bg-white dark:bg-brand-900 border border-brand-100 p-2 rounded-xl rounded-tl-none max-w-[88%] shadow-sm">
+                            <p class="font-bold text-brand-600 mb-0.5">🤖 CSKH Góc Mẹ Bỉm:</p>
+                            <p class="text-slate-700 dark:text-slate-200">${m.text}</p>
+                        </div>`;
+                    } else {
+                        return `
+                        <div class="self-end bg-brand-500 text-white p-2 rounded-xl rounded-tr-none max-w-[88%] shadow-sm">
+                            <p>${m.text}</p>
+                        </div>`;
+                    }
+                }).join('');
                 
-                Object.keys(data).forEach(k => {
-                    const msg = data[k];
-                    const isMe = msg.sender === 'user';
-                    box.innerHTML += `
-                        <div class="${isMe?'self-end bg-brand-500 text-white':'self-start bg-white dark:bg-brand-900 border border-brand-100 text-slate-800 dark:text-white'} p-2 rounded-xl max-w-[85%] shadow-sm">
-                            <p class="text-[10px] font-bold opacity-80">${isMe?'Bạn':(msg.senderName||'Admin')}:</p>
-                            <p>${msg.text}</p>
-                        </div>
-                    `;
-                });
-                box.scrollTop = box.scrollHeight;
+                // Show badge if chat is closed and new msg arrived
+                if(document.getElementById('complaintChatWindow').classList.contains('hidden') && msgs.length > 0 && msgs[msgs.length-1].sender === 'admin') {
+                    document.getElementById('chatUnreadBadge').classList.remove('hidden');
+                }
+                setTimeout(() => box.scrollTop = box.scrollHeight, 100);
             });
         }
 
         window.sendComplaintMessage = async function(e) {
             e.preventDefault();
-            if(!window.appState.currentUser) return showToast("Vui lòng đăng nhập!");
             const input = document.getElementById('complaintInput');
             const text = input.value.trim();
             if(!text) return;
-
-            await push(ref(db, `complaints/${window.appState.currentUser.uid}`), {
-                sender: 'user',
-                senderName: window.appState.userProfile.displayName || 'Mẹ bỉm',
-                text: text,
-                timestamp: serverTimestamp()
+            const uid = window.appState.currentUser.uid;
+            await push(ref(db, `complaints/${uid}/messages`), {
+                sender: 'user', text: text, time: new Date().toISOString()
+            });
+            await update(ref(db, `complaints/${uid}`), {
+                userName: window.appState.userProfile.displayName,
+                lastUpdate: new Date().toISOString()
             });
             input.value = '';
         };
 
-        window.toggleComplaintChat = () => {
-            document.getElementById('complaintChatWindow').classList.toggle('hidden');
+        // ---------------- ADMIN PANEL (FULL IMPLEMENTATION) ----------------
+        window.openAdminModal = () => window.openModal('adminModal');
+        window.closeAdminModal = () => window.closeModal('adminModal');
+        
+        window.handleAdminPinSubmit = function(e) {
+            e.preventDefault();
+            const pin = document.getElementById('adminPinInput').value;
+            if(pin === '123456') {
+                document.getElementById('adminPinSection').classList.add('hidden');
+                document.getElementById('adminContentSection').classList.remove('hidden');
+                window.switchAdminTab('proofs');
+            } else {
+                showToast("Sai mã PIN!", true);
+            }
         };
 
-        function renderAdminComplaintList(complaintsData) {
-            const list = document.getElementById('adminChatUserList');
-            if(!list) return;
-            list.innerHTML = '';
-            
-            Object.keys(complaintsData).forEach(uid => {
-                const msgs = complaintsData[uid];
-                const lastKey = Object.keys(msgs).pop();
-                const lastMsg = msgs[lastKey];
-                
-                list.innerHTML += `
-                    <div onclick="selectAdminChatUser('${uid}', '${lastMsg.senderName||'Mẹ bỉm'}')" class="p-2 bg-white dark:bg-darkcard hover:bg-brand-100 rounded-xl cursor-pointer border border-brand-100 shadow-sm transition">
-                        <p class="font-bold text-xs text-brand-800 dark:text-white">${lastMsg.senderName||'Mẹ bỉm'}</p>
-                        <p class="text-[10px] text-slate-500 truncate">${lastMsg.text}</p>
-                    </div>
-                `;
+        window.switchAdminTab = function(tab) {
+            ['proofs', 'withdrawals', 'products', 'users', 'complaints', 'ai'].forEach(t => {
+                document.getElementById(`adminSection${t.charAt(0).toUpperCase()+t.slice(1)}`).classList.add('hidden');
+                document.getElementById(`adminTab${t.charAt(0).toUpperCase()+t.slice(1)}`).classList.remove('ring-2', 'ring-offset-2', 'ring-brand-500');
             });
-        }
+            document.getElementById(`adminSection${tab.charAt(0).toUpperCase()+tab.slice(1)}`).classList.remove('hidden');
+            document.getElementById(`adminTab${tab.charAt(0).toUpperCase()+tab.slice(1)}`).classList.add('ring-2', 'ring-offset-2', 'ring-brand-500');
+            
+            if(tab === 'proofs') renderAdminProofs();
+            if(tab === 'withdrawals') renderAdminWithdrawals();
+            if(tab === 'products') renderAdminProductList();
+            if(tab === 'users') renderAdminUsers();
+        };
 
-        window.selectAdminChatUser = function(uid, name) {
+        // ADMIN: ADD PRODUCT
+        window.previewAdminMultiPhotos = function(e) {
+            const files = Array.from(e.target.files);
+            window.appState.adminFilesToUpload = files;
+            const container = document.getElementById('adminMultiPhotoPreview');
+            container.innerHTML = '';
+            if(files.length > 0) container.classList.remove('hidden');
+            else container.classList.add('hidden');
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    container.innerHTML += `<img src="${ev.target.result}" class="w-full h-12 object-cover rounded shadow-sm">`;
+                };
+                reader.readAsDataURL(file);
+            });
+        };
+
+        window.handleAddProduct = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnAdminAddProduct');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tải lên...';
+            btn.disabled = true;
+
+            try {
+                let imageUrls = [];
+                for(let file of window.appState.adminFilesToUpload) {
+                    let url = await uploadFileToStorage(file, 'products');
+                    imageUrls.push(url);
+                }
+
+                await push(ref(db, 'products'), {
+                    title: document.getElementById('pTitle').value,
+                    category: document.getElementById('pCategory').value,
+                    ageStage: document.getElementById('pAgeStage').value,
+                    price: Number(document.getElementById('pPrice').value),
+                    originalPrice: Number(document.getElementById('pOriginalPrice').value),
+                    rewardPoints: Number(document.getElementById('pRewardPoints').value),
+                    affiliateUrl: document.getElementById('pAffiliateUrl').value,
+                    hashtags: document.getElementById('pHashtags').value,
+                    badge: document.getElementById('pBadge').value,
+                    description: document.getElementById('pDescription').value,
+                    images: imageUrls,
+                    imageUrl: imageUrls[0] || '', // Fallback for old code
+                    createdAt: new Date().toISOString()
+                });
+
+                document.getElementById('addProductForm').reset();
+                document.getElementById('adminMultiPhotoPreview').innerHTML = '';
+                document.getElementById('adminMultiPhotoPreview').classList.add('hidden');
+                window.appState.adminFilesToUpload = [];
+                showToast("Đã thêm sản phẩm thành công!");
+            } catch (err) {
+                showToast("Lỗi: " + err.message, true);
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Đăng Lên Trang Web';
+                btn.disabled = false;
+            }
+        };
+
+        window.deleteProduct = async function(id) {
+            if(confirm("Chắc chắn xóa sản phẩm này?")) {
+                await remove(ref(db, `products/${id}`));
+                showToast("Đã xóa sản phẩm");
+            }
+        };
+
+        window.renderAdminProductList = function() {
+            const list = document.getElementById('adminProductList');
+            list.innerHTML = window.appState.products.map(p => `
+                <div class="flex items-center gap-2 p-2 border border-brand-100 rounded-xl bg-white dark:bg-darkbg">
+                    <img src="${(p.images&&p.images[0])||p.imageUrl}" class="w-12 h-12 object-cover rounded">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-[11px] truncate">${p.title}</p>
+                        <p class="text-[9px] text-slate-400">Giá: ${p.price} | Thưởng: ${p.rewardPoints}</p>
+                    </div>
+                    <button onclick="deleteProduct('${p.id}')" class="bg-red-100 text-red-600 px-2 py-1 rounded text-[10px] font-bold">Xóa</button>
+                </div>
+            `).join('');
+        };
+
+        // ADMIN: PROOFS
+        window.renderAdminProofs = function() {
+            const pending = window.appState.proofs.filter(p => p.status === 'pending');
+            document.getElementById('adminProofCountBadge').innerText = `${pending.length} đơn chờ`;
+            
+            const tbody = document.getElementById('adminProofTableBody');
+            tbody.innerHTML = window.appState.proofs.map(p => {
+                const filesHtml = (p.files || []).map(f => `<a href="${f}" target="_blank" class="text-blue-500 hover:underline">Link</a>`).join(' ');
+                let actions = '';
+                if(p.status === 'pending') {
+                    actions = `
+                        <button onclick="adminApproveProof('${p.id}', '${p.userId}', ${p.rewardPoints})" class="bg-green-500 text-white px-2 py-1 rounded shadow-sm text-[9px] mr-1">Duyệt</button>
+                        <button onclick="adminRejectProof('${p.id}')" class="bg-red-500 text-white px-2 py-1 rounded shadow-sm text-[9px]">Từ Chối</button>
+                    `;
+                }
+                return `
+                <tr>
+                    <td class="p-2.5 text-[9px]">${new Date(p.time).toLocaleDateString()}</td>
+                    <td class="p-2.5"><p class="font-bold">${p.userName}</p><p class="text-[9px]">${p.secretCode}</p></td>
+                    <td class="p-2.5 truncate max-w-[150px]">${p.productTitle}</td>
+                    <td class="p-2.5 font-mono">${p.orderId}</td>
+                    <td class="p-2.5 font-black text-accent-500">+${p.rewardPoints}</td>
+                    <td class="p-2.5">${filesHtml}</td>
+                    <td class="p-2.5 font-bold ${p.status==='approved'?'text-green-500':p.status==='rejected'?'text-red-500':'text-yellow-500'}">${p.status}</td>
+                    <td class="p-2.5 text-right">${actions}</td>
+                </tr>`;
+            }).join('');
+        };
+
+        window.adminApproveProof = async function(proofId, userId, points) {
+            if(confirm("Duyệt đơn và cộng điểm?")) {
+                const user = window.appState.users.find(u => u.uid === userId);
+                if(user) {
+                    await update(ref(db, `users/${userId}`), { points: (user.points || 0) + points });
+                }
+                await update(ref(db, `proofs/${proofId}`), { status: 'approved' });
+                showToast("Đã duyệt đơn và cộng điểm!");
+            }
+        };
+        window.adminRejectProof = async function(proofId) {
+            if(confirm("Từ chối đơn này?")) {
+                await update(ref(db, `proofs/${proofId}`), { status: 'rejected' });
+                showToast("Đã từ chối đơn!");
+            }
+        };
+
+        // ADMIN: WITHDRAWALS
+        window.renderAdminWithdrawals = function() {
+            const pending = window.appState.withdrawals.filter(w => w.status === 'pending');
+            document.getElementById('adminWithdrawCountBadge').innerText = `${pending.length} yêu cầu`;
+
+            const tbody = document.getElementById('adminWithdrawTableBody');
+            tbody.innerHTML = window.appState.withdrawals.map(w => {
+                let actions = '';
+                if(w.status === 'pending') {
+                    actions = `
+                        <button onclick="adminApproveWithdraw('${w.id}')" class="bg-green-500 text-white px-2 py-1 rounded shadow-sm text-[9px] mr-1">Đã Chuyển Tiền</button>
+                        <button onclick="adminRejectWithdraw('${w.id}', '${w.userId}', ${w.amount})" class="bg-red-500 text-white px-2 py-1 rounded shadow-sm text-[9px]">Hủy & Hoàn Điểm</button>
+                    `;
+                }
+                return `
+                <tr>
+                    <td class="p-2.5 text-[9px]">${new Date(w.time).toLocaleDateString()}</td>
+                    <td class="p-2.5"><p class="font-bold">${w.userName}</p><p class="text-[9px]">${w.secretCode}</p></td>
+                    <td class="p-2.5 font-black text-green-500">${window.formatCompactNumber(w.amount)}đ</td>
+                    <td class="p-2.5"><p class="font-bold text-[9px]">${w.bankName}</p><p>${w.bankAccount} - ${w.bankHolder}</p></td>
+                    <td class="p-2.5"><img src="${w.bankQrUrl}" class="w-10 h-10 object-cover rounded cursor-pointer" onclick="openLightbox(this.src)"></td>
+                    <td class="p-2.5 font-bold ${w.status==='approved'?'text-green-500':w.status==='rejected'?'text-red-500':'text-yellow-500'}">${w.status}</td>
+                    <td class="p-2.5 text-right">${actions}</td>
+                </tr>`;
+            }).join('');
+        };
+
+        window.adminApproveWithdraw = async function(id) {
+            if(confirm("Đã chuyển tiền cho mẹ bỉm này?")) {
+                await update(ref(db, `withdrawals/${id}`), { status: 'approved' });
+                showToast("Đã đánh dấu hoàn tất!");
+            }
+        };
+        window.adminRejectWithdraw = async function(id, userId, amount) {
+            if(confirm("Hủy yêu cầu và hoàn lại điểm?")) {
+                const user = window.appState.users.find(u => u.uid === userId);
+                if(user) {
+                    await update(ref(db, `users/${userId}`), { points: (user.points || 0) + amount });
+                }
+                await update(ref(db, `withdrawals/${id}`), { status: 'rejected' });
+                showToast("Đã hủy và hoàn điểm!");
+            }
+        };
+
+        // ADMIN: USERS
+        window.renderAdminUsers = function() {
+            const tbody = document.getElementById('adminUsersTableBody');
+            tbody.innerHTML = window.appState.users.map(u => `
+                <tr>
+                    <td class="p-2.5"><p class="font-bold">${u.displayName}</p><p class="text-[9px]">${u.secretCode}</p></td>
+                    <td class="p-2.5">${u.email}</td>
+                    <td class="p-2.5 font-black text-accent-500">${window.formatCompactNumber(u.points)}</td>
+                    <td class="p-2.5 font-bold ${u.isBlocked?'text-red-500':'text-green-500'}">${u.isBlocked?'Khóa':'Bình thường'}</td>
+                    <td class="p-2.5 text-right flex justify-end gap-1">
+                        <button onclick="adminAdjustUserPoints('${u.uid}', 10000)" class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold text-[9px]">+10k</button>
+                        <button onclick="adminAdjustUserPoints('${u.uid}', -10000)" class="bg-orange-100 text-orange-600 px-2 py-1 rounded font-bold text-[9px]">-10k</button>
+                        <button onclick="adminToggleBlockUser('${u.uid}', ${u.isBlocked})" class="${u.isBlocked?'bg-green-100 text-green-600':'bg-red-100 text-red-600'} px-2 py-1 rounded font-bold text-[9px]">${u.isBlocked?'Mở Khóa':'Khóa'}</button>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        window.adminAdjustUserPoints = async function(uid, amount) {
+            const u = window.appState.users.find(x => x.uid === uid);
+            if(u) {
+                await update(ref(db, `users/${uid}`), { points: (u.points || 0) + amount });
+                showToast(`Đã ${amount > 0 ? 'cộng' : 'trừ'} điểm!`);
+            }
+        };
+        window.adminToggleBlockUser = async function(uid, isBlocked) {
+            await update(ref(db, `users/${uid}`), { isBlocked: !isBlocked });
+            showToast(`Đã ${isBlocked ? 'mở khóa' : 'khóa'} tài khoản!`);
+        };
+
+        // ADMIN: CHAT
+        window.renderAdminComplaintList = function(complaintsData) {
+            const list = document.getElementById('adminChatUserList');
+            const arr = Object.keys(complaintsData).map(uid => ({uid, ...complaintsData[uid]})).sort((a,b) => new Date(b.lastUpdate) - new Date(a.lastUpdate));
+            
+            if(arr.length === 0) {
+                list.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4">Chưa có tin nhắn</p>';
+                return;
+            }
+
+            list.innerHTML = arr.map(c => `
+                <div class="p-2 border border-brand-100 rounded-lg bg-white cursor-pointer hover:bg-brand-50" onclick="adminSelectChatUser('${c.uid}', '${c.userName}')">
+                    <p class="font-bold text-[11px] text-brand-800 truncate">${c.userName}</p>
+                    <p class="text-[9px] text-slate-400">${new Date(c.lastUpdate).toLocaleString()}</p>
+                </div>
+            `).join('');
+        };
+
+        window.adminSelectChatUser = function(uid, name) {
             window.appState.adminChatUserId = uid;
             document.getElementById('adminChatHeader').classList.remove('hidden');
             document.getElementById('adminChatForm').classList.remove('hidden');
             document.getElementById('adminChatCurrentName').innerText = `Chat với ${name}`;
-
-            onValue(ref(db, `complaints/${uid}`), (s) => {
+            
+            onValue(ref(db, `complaints/${uid}/messages`), (s) => {
+                if(window.appState.adminChatUserId !== uid) return; // Prevent mixups
                 const data = s.val() || {};
+                const msgs = Object.keys(data).map(k => data[k]);
                 const box = document.getElementById('adminChatMessages');
-                box.innerHTML = '';
-                Object.keys(data).forEach(k => {
-                    const msg = data[k];
-                    const isAdmin = msg.sender === 'admin';
-                    box.innerHTML += `
-                        <div class="${isAdmin?'self-end bg-purple-600 text-white':'self-start bg-white dark:bg-darkbg border border-brand-200 text-slate-800 dark:text-white'} p-2 rounded-xl max-w-[85%] shadow-sm">
-                            <p class="text-[10px] font-bold opacity-80">${isAdmin?'Admin':(msg.senderName||'Mẹ bỉm')}:</p>
-                            <p>${msg.text}</p>
-                        </div>
-                    `;
-                });
-                box.scrollTop = box.scrollHeight;
+                box.innerHTML = msgs.map(m => {
+                    if(m.sender === 'admin') {
+                        return `<div class="self-end bg-brand-500 text-white p-2 rounded-xl max-w-[80%] ml-auto text-right shadow-sm"><p>${m.text}</p></div>`;
+                    } else {
+                        return `<div class="self-start bg-white border border-brand-100 p-2 rounded-xl max-w-[80%] shadow-sm"><p>${m.text}</p></div>`;
+                    }
+                }).join('');
+                setTimeout(() => box.scrollTop = box.scrollHeight, 100);
             });
         };
 
@@ -1607,275 +1990,109 @@ EOF
             const text = input.value.trim();
             if(!text) return;
 
-            await push(ref(db, `complaints/${uid}`), {
-                sender: 'admin',
-                senderName: 'Admin Góc Mẹ Bỉm',
-                text: text,
-                timestamp: serverTimestamp()
+            await push(ref(db, `complaints/${uid}/messages`), {
+                sender: 'admin', text: text, time: new Date().toISOString()
             });
             input.value = '';
         };
 
-        // ---------------- ADMIN PANEL CONTROLS ----------------
-        window.openAdminModal = () => openModal('adminModal');
-        window.closeAdminModal = () => closeModal('adminModal');
-        window.handleAdminPinSubmit = (e) => {
-            e.preventDefault();
-            const pin = document.getElementById('adminPinInput').value;
-            if(pin === '123456') {
-                document.getElementById('adminPinSection').classList.add('hidden');
-                document.getElementById('adminContentSection').classList.remove('hidden');
-            } else {
-                showToast("❌ Sai mã PIN!");
+        window.adminActionChatUser = async function(action) {
+            const uid = window.appState.adminChatUserId;
+            if(!uid) return;
+            if(action === 'addPoint') {
+                await window.adminAdjustUserPoints(uid, 10000);
+                await push(ref(db, `complaints/${uid}/messages`), { sender: 'admin', text: '🎁 Admin đã tặng bạn 10.000 điểm!', time: new Date().toISOString() });
+            } else if(action === 'block') {
+                await window.adminToggleBlockUser(uid, false);
             }
         };
 
-        window.switchAdminTab = (tab) => {
-            ['Proofs', 'Withdrawals', 'Products', 'Users', 'Complaints', 'Ai'].forEach(t => {
-                const sec = document.getElementById(`adminSection${t}`);
-                const btn = document.getElementById(`adminTab${t}`);
-                if(sec) sec.classList.toggle('hidden', t.toLowerCase() !== tab.toLowerCase());
-                if(btn) btn.className = `px-3.5 py-2 rounded-xl flex items-center gap-1.5 shrink-0 ${t.toLowerCase()===tab.toLowerCase()?'bg-purple-600 text-white shadow':'bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300'}`;
-            });
+        // ---------------- GEMINI AI ASSISTANT FOR ADMIN ----------------
+        window.loadGeminiConfig = function() {
+            const key = localStorage.getItem('mb_gemini_key') || '';
+            const model = localStorage.getItem('mb_gemini_model') || 'gemini-2.5-flash';
+            document.getElementById('geminiApiKey').value = key;
+            document.getElementById('geminiModel').value = model;
         };
 
-        // ---------------- PROOF SUBMISSION & PRODUC PICKER ----------------
-        window.openProductSelectorForProof = () => {
-            if(!window.appState.currentUser) return openAuthModal('login');
-            openModal('proofModal');
-        };
-        window.closeProofModal = () => closeModal('proofModal');
-
-        window.openProductSelectorModal = () => {
-            const list = document.getElementById('productPickerList');
-            list.innerHTML = window.appState.products.map(p => `
-                <div onclick="selectProductForProof('${p.id}', '${p.title.replace(/'/g, "\\'")}')" class="p-2.5 bg-brand-50 dark:bg-darkbg hover:bg-brand-100 rounded-xl cursor-pointer flex items-center justify-between border border-brand-100 shadow-sm">
-                    <span class="font-bold text-xs truncate w-60">${p.title}</span>
-                    <span class="text-accent-600 font-black text-xs">+${window.formatCompactNumber(p.rewardPoints||0)}đ</span>
-                </div>
-            `).join('');
-            openModal('productPickerModal');
-        };
-        window.closeProductPickerModal = () => closeModal('productPickerModal');
-
-        window.selectProductForProof = (id, title) => {
-            document.getElementById('selectedProductId').value = id;
-            document.getElementById('selectedProductTitle').innerText = title;
-            closeProductPickerModal();
+        window.saveGeminiConfig = function() {
+            localStorage.setItem('mb_gemini_key', document.getElementById('geminiApiKey').value);
+            localStorage.setItem('mb_gemini_model', document.getElementById('geminiModel').value);
         };
 
-        window.previewProofMultiple = (e) => {
-            const files = Array.from(e.target.files);
-            const container = document.getElementById('proofPreviewContainerMultiple');
-            container.innerHTML = '';
-            if(files.length > 0) {
-                container.classList.remove('hidden');
-                files.forEach(f => {
-                    const r = new FileReader();
-                    r.onload = ev => {
-                        container.innerHTML += `<img src="${ev.target.result}" class="w-16 h-16 object-cover rounded-xl border border-brand-200">`;
-                    };
-                    r.readAsDataURL(f);
-                });
-            } else {
-                container.classList.add('hidden');
+        function addAiMessage(role, text) {
+            const box = document.getElementById('aiChatBox');
+            const id = 'ai_msg_' + Date.now();
+            const html = role === 'admin' 
+                ? `<div class="self-end bg-purple-600 text-white p-2.5 rounded-2xl rounded-tr-none max-w-[90%] ml-auto text-right shadow-sm"><p>${text}</p></div>`
+                : `<div id="${id}" class="self-start bg-white dark:bg-darkcard border border-brand-200 dark:border-brand-700 p-2.5 rounded-2xl rounded-tl-none max-w-[90%] shadow-sm whitespace-pre-wrap"><p class="font-black text-brand-700 dark:text-brand-300 mb-0.5">🤖 Gemini AI:</p><p class="text-slate-700 dark:text-slate-200">${text}</p></div>`;
+            box.innerHTML += html;
+            setTimeout(() => box.scrollTop = box.scrollHeight, 100);
+            return id;
+        }
+
+        function updateAiMessage(id, text) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.querySelector('.text-slate-700').innerHTML = text.replace(/\n/g, '<br>');
             }
-        };
+        }
 
-        window.submitOrderProof = async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btnSubmitProof');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang tải lên...`;
-            btn.disabled = true;
-
-            try {
-                const productId = document.getElementById('selectedProductId').value;
-                const p = window.appState.products.find(i => i.id === productId);
-                const files = Array.from(document.getElementById('proofImgFile').files);
-
-                const imgUrls = [];
-                for(let file of files) {
-                    const u = await uploadFileToStorage(file, 'proofs');
-                    imgUrls.push(u);
-                }
-
-                await push(ref(db, 'proofs'), {
-                    userId: window.appState.currentUser.uid,
-                    userEmail: window.appState.currentUser.email,
-                    productId: productId,
-                    productTitle: p ? p.title : 'Sản phẩm',
-                    rewardPoints: p ? p.rewardPoints : 1000,
-                    orderId: document.getElementById('proofOrderId').value.trim(),
-                    imgUrls: imgUrls,
-                    note: document.getElementById('proofNote').value.trim(),
-                    status: 'pending',
-                    createdAt: serverTimestamp()
-                });
-
-                showToast("🎉 Đã gửi đơn tích điểm thành công!");
-                closeProofModal();
-            } catch (err) {
-                showToast("❌ Lỗi: " + err.message);
-            } finally {
-                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Gửi Đơn Tích Điểm`;
-                btn.disabled = false;
-            }
-        };
-
-        // ---------------- BANK & WITHDRAWAL HANDLERS ----------------
-        window.previewQrUpload = (e) => {
-            const file = e.target.files[0];
-            if(file) {
+        // File to Generative Part helper
+        async function fileToGenerativePart(file) {
+            return new Promise((resolve) => {
                 const reader = new FileReader();
-                reader.onload = (ev) => {
-                    document.getElementById('qrPreviewContainer').classList.remove('hidden');
-                    document.getElementById('qrPreviewImg').src = ev.target.result;
+                reader.onloadend = () => {
+                    const base64Data = reader.result.split(',')[1];
+                    resolve({
+                        inlineData: { data: base64Data, mimeType: file.type }
+                    });
                 };
                 reader.readAsDataURL(file);
-            }
-        };
+            });
+        }
 
-        window.saveBankInfo = async function(e) {
+        window.handleAiChatSubmit = async function(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnSaveBank');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...`;
-            btn.disabled = true;
+            const input = document.getElementById('aiInputPrompt').value;
+            const apiKey = document.getElementById('geminiApiKey').value;
+            const model = document.getElementById('geminiModel').value;
+            const sysPrompt = document.getElementById('geminiSystemPrompt').value;
+            const fileInput = document.getElementById('aiImageInput');
+            
+            if(!apiKey) return showToast("Vui lòng nhập Gemini API Key!", true);
+            
+            addAiMessage('admin', input + (fileInput.files.length > 0 ? ' [Đính kèm ảnh]' : ''));
+            document.getElementById('aiInputPrompt').value = '';
+            const loadingId = addAiMessage('ai', '<i class="fa-solid fa-spinner fa-spin"></i> Đang suy nghĩ...');
 
             try {
-                const qrFile = document.getElementById('bankQrFile').files[0];
-                let qrUrl = document.getElementById('existingQrUrl').value;
-
-                if(qrFile) {
-                    qrUrl = await uploadFileToStorage(qrFile, 'bank_qrs');
+                let parts = [{text: sysPrompt + "\n\nYêu cầu của Admin: " + input}];
+                
+                if(fileInput.files.length > 0) {
+                    const filePart = await fileToGenerativePart(fileInput.files[0]);
+                    parts.push(filePart);
                 }
 
-                if(!qrUrl) throw new Error("Bắt buộc phải tải ảnh Mã QR Ngân Hàng!");
-
-                await update(ref(db, `users/${window.appState.currentUser.uid}`), {
-                    bankName: document.getElementById('bankName').value,
-                    bankAccount: document.getElementById('bankAccount').value.trim(),
-                    bankHolder: document.getElementById('bankHolder').value.trim().toUpperCase(),
-                    bankQrUrl: qrUrl
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: parts }]
+                    })
                 });
-
-                showToast("✅ Đã cập nhật thông tin Ngân hàng & QR!");
-            } catch (err) {
-                showToast("❌ Lỗi: " + err.message);
-            } finally {
-                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Lưu Thông Tin & Mã QR`;
-                btn.disabled = false;
+                
+                const data = await response.json();
+                if(data.error) throw new Error(data.error.message);
+                
+                const text = data.candidates[0].content.parts[0].text;
+                updateAiMessage(loadingId, text);
+                fileInput.value = ''; // clear file
+            } catch(err) {
+                updateAiMessage(loadingId, 'Lỗi kết nối API: ' + err.message);
             }
         };
 
-        window.submitWithdrawalRequestCustom = async function(e) {
-            e.preventDefault();
-            const amount = parseInt(document.getElementById('withdrawAmountInput').value);
-            const user = window.appState.userProfile;
-
-            if(!user.bankName || !user.bankAccount || !user.bankQrUrl) {
-                showToast("⚠️ Vui lòng cập nhật đủ Ngân Hàng & Mã QR trước!");
-                return switchWalletTab('bank');
-            }
-
-            if(amount > (user.points || 0)) {
-                showToast("⚠️ Số dư điểm không đủ!");
-                return;
-            }
-
-            try {
-                await push(ref(db, 'withdrawals'), {
-                    userId: user.uid,
-                    userEmail: user.email,
-                    amount: amount,
-                    bankName: user.bankName,
-                    bankAccount: user.bankAccount,
-                    bankHolder: user.bankHolder,
-                    bankQrUrl: user.bankQrUrl,
-                    status: 'pending',
-                    createdAt: serverTimestamp()
-                });
-
-                await update(ref(db, `users/${user.uid}`), {
-                    points: user.points - amount
-                });
-
-                showToast("🎉 Đã gửi yêu cầu rút tiền thành công!");
-                closeWalletModal();
-            } catch (err) {
-                showToast("❌ Lỗi: " + err.message);
-            }
-        };
-
-        // ---------------- MISC UTILS ----------------
-        window.claimDailyAttendance = async () => {
-            if(!window.appState.currentUser) return openAuthModal('login');
-            const cur = window.appState.userProfile.points || 0;
-            await update(ref(db, `users/${window.appState.currentUser.uid}`), { points: cur + 500 });
-            showToast("🎉 Điểm danh thành công! +500 điểm");
-        };
-
-        window.copySecretCode = () => {
-            const code = document.getElementById('heroUserCode').innerText;
-            navigator.clipboard.writeText(code);
-            showToast("📋 Đã chép mã ẩn!");
-        };
-
-        window.openLightbox = (src) => {
-            document.getElementById('lightboxImg').src = src;
-            openModal('lightboxModal');
-        };
-        window.closeLightbox = () => closeModal('lightboxModal');
-
-        window.openLeaderboardModal = () => {
-            const list = document.getElementById('leaderboardList');
-            const sorted = [...window.appState.users].sort((a,b) => (b.points||0) - (a.points||0));
-            list.innerHTML = sorted.slice(0, 10).map((u, i) => `
-                <div class="flex items-center justify-between p-2.5 bg-brand-50 dark:bg-darkbg rounded-xl border border-brand-100">
-                    <span class="font-bold"><span class="text-accent-500 font-black">#${i+1}</span> ${u.displayName||'Mẹ bỉm'}</span>
-                    <span class="font-black text-brand-600">${window.formatCompactNumber(u.points||0)} điểm</span>
-                </div>
-            `).join('');
-            openModal('leaderboardModal');
-        };
-        window.closeLeaderboardModal = () => closeModal('leaderboardModal');
-
-        window.openTransactionLogModal = () => openModal('transactionLogModal');
-        window.closeTransactionLogModal = () => closeModal('transactionLogModal');
-
-        window.openCalculatorModal = () => openModal('calculatorModal');
-        window.closeCalculatorModal = () => closeModal('calculatorModal');
-        window.calculateCashback = () => {
-            const val = parseInt(document.getElementById('calcOrderValue').value) || 0;
-            const rate = parseInt(document.getElementById('calcRate').value) || 0;
-            const res = Math.floor(val * (rate / 100));
-            document.getElementById('calcResult').innerText = `${res.toLocaleString('vi-VN')} VNĐ (${res.toLocaleString('vi-VN')} Điểm)`;
-        };
-
-        window.openCommunityModal = () => openModal('communityModal');
-        window.closeCommunityModal = () => closeModal('communityModal');
-
-        window.openWishlistModal = () => {
-            loadUserWishlist();
-            const container = document.getElementById('wishlistContainer');
-            const favProducts = window.appState.products.filter(p => window.appState.wishlist.includes(p.id));
-            if(favProducts.length === 0) {
-                container.innerHTML = `<p class="text-center py-4 text-brand-400 italic">Chưa có sản phẩm yêu thích.</p>`;
-            } else {
-                container.innerHTML = favProducts.map(p => `
-                    <div class="p-2.5 bg-brand-50 dark:bg-darkbg rounded-xl flex items-center justify-between border border-brand-100">
-                        <span class="font-bold truncate w-48">${p.title}</span>
-                        <button onclick="toggleWishlist('${p.id}'); openWishlistModal();" class="text-red-500 font-bold text-xs"><i class="fa-solid fa-trash"></i> Xóa</button>
-                    </div>
-                `).join('');
-            }
-            openModal('wishlistModal');
-        };
-        window.closeWishlistModal = () => closeModal('wishlistModal');
-
-        window.openReminderModal = () => openModal('reminderModal');
-        window.closeReminderModal = () => closeModal('reminderModal');
-
-        window.toggleNotificationPanel = () => document.getElementById('notifPanel').classList.toggle('hidden');
     </script>
 </body>
 </html>
